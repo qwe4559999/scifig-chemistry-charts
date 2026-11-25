@@ -1,0 +1,45 @@
+{
+ "name": "journal-nature-arial",
+ "source": "Nature / clean sans-serif journal style (Arial, open top/right spines, outward ticks, NPG palette)",
+ "font": {
+  "family": "Arial",
+  "weight": "normal",
+  "style": "normal"
+ },
+ "size": {
+  "label": 8.5,
+  "tick": 7.5,
+  "legend": 7.5,
+  "panel": 10.0,
+  "annot": 6.5,
+  "small": 6.5,
+  "sub": 6.0
+ },
+ "line": {
+  "axis": 0.9,
+  "data": 1.2,
+  "drifts": 0.75,
+  "fit": 0.75,
+  "thin": 0.45
+ },
+ "tick": {
+  "direction": "out",
+  "length": 3.0,
+  "width": 0.9,
+  "pad": 2.5,
+  "minor": false,
+  "top": false,
+  "right": false
+ },
+ "spines": {
+  "lw": 0.9,
+  "all": false
+ },
+ "legend": {
+  "frameon": false,
+  "handlelength": 1.6,
+  "handletextpad": 0.4,
+  "borderaxespad": 0.25
+ },
+ "palette": "nature-npg"
+}

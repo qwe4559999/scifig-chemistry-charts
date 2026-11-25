@@ -1,0 +1,92 @@
+{
+ "id": "06_single-multi-spectrum",
+ "name": "单面板多曲线光谱+峰标 (Single-Panel Multi-Spectrum: EPR / UV-Vis)",
+ "category": "spectroscopy",
+ "figures": ["Fig5A", "FigS7"],
+ "when": "Overlaying 2-4 unstacked curves in a single axes frame (sharing true baseline/intensity) with peak vertical dashed guides, rotated peak labels, or EPR hyperfine g||/A|| comb brackets and g_perp markers.",
+ "data_contract": {
+  "required_slots": {
+   "x": "Continuous field/wavelength axis (Magnetic field in G for EPR; Wavelength in nm for UV-Vis).",
+   "series": "1..4 numeric y-columns plotted on the same axis without artificial vertical stacking offsets."
+  },
+  "optional_slots": {
+   "comb_brackets": "EPR hyperfine quartet bracket spec: teeth x-positions, baseline/top y, label (e.g. g_||=2.38, A_||=149 G).",
+   "peak_vlines": "Vertical dashed lines + rotated wavenumber/wavelength labels (e.g. 209, 258, 724 nm in UV-Vis)."
+  },
+  "formats": [".csv", ".xlsx", ".txt", ".spc"],
+  "x_direction": "ascending",
+  "y_meaning": "Signal intensity (a.u.) or Absorbance / F(R) (a.u.) with suppressed numeric y-ticks.",
+  "constraints": [
+   "Do NOT normalize curves independently; EPR and UV-Vis compare relative intensity across Cu loadings.",
+   "FigS7 original PDF is large format (8.49 x 7.46 in, 611x537 pt) with bold scaled typography (36pt labels, 26pt ticks, 3.96pt frames/curves) — scale fonts/lines cleanly to match 1:1 visual weight!",
+   "For Fig5A EPR: render g_// and g_perp subscripts cleanly in bold mathtext (g$_{//}$=2.38, A$_{//}$=149 G, g$_{\\perp}$=2.08) and align comb teeth to actual hyperfine quartet peaks."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 8.49,
+  "height_in": 7.46,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "margins": {"l": 0.14, "r": 0.04, "t": 0.05, "b": 0.14}
+ },
+ "style": {
+  "scale": 2.55,
+  "line": {"data": 1.55, "thin": 0.8}
+ },
+ "axes_defaults": {
+  "x": {"label": "Field (G) / Wavelength (nm)"},
+  "y": {"label": "Signal intensity (a.u.) / Absorbance (a.u.)", "ticks": []}
+ },
+ "blind_mode": {
+  "x_range_policy": "data_min_max_exact",
+  "y_range_policy": "data_min_max_pad_12pct",
+  "reverse_x": false,
+  "legend_placement": "sparse_corner_search",
+  "annotation_strategy": "auto_top_N_peaks_vertical_guides",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["relocate_legend_to_sparsest_corner", "expand_ylim_12pct", "nudge_peak_labels_away_from_curves"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "forbid_per_curve_norm": true,
+  "check_nan": true
+ },
+ "notes": [
+  "Fig5A (left panel of 7.09x2.93 in Fig5): 3 curves (Catalyst-A #6699BA, Catalyst-B #CCA8E3, Catalyst-C #8CCF8C), bottom-left legend, NO minor ticks on x-axis, g||=2.38 A||=149G comb bracket + g_perp=2.08.",
+  "FigS7 (8.49x7.46 in): UV-Vis-DRS 200-800 nm, 3 bold spectra (#6699BA, #CCA8E3, #8CCF8C), vertical dashed lines + bold peak labels at 209, 258, 724 nm, top-right legend.",
+  "Raw .spc files (data/raw_epr/ and 11_UV-Vis/) are bare float arrays without embedded x-axes; pair with .par or exported .txt/.csv/.xlsx."
+ ],
+ "spec_template": {
+  "chart": "06_single-multi-spectrum",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 8.49, "height_in": 7.46, "dpi": 300},
+  "data": {
+   "uv": {"source": "[[XLSX_OR_CSV]]"}
+  },
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "x": {"label": "Wavelength (nm)", "lim": [200, 800], "ticks": [200, 300, 400, 500, 600, 700, 800]},
+    "y": {"label": "Absorbance (a.u.)", "ticks": []},
+    "plots": [
+     {"type": "line", "data": "uv", "x": "0", "y": "1", "color": "Catalyst-A", "lw": 3.5, "label": "Catalyst-A"},
+     {"type": "line", "data": "uv", "x": "0", "y": "2", "color": "Catalyst-B", "lw": 3.5, "label": "Catalyst-B"},
+     {"type": "line", "data": "uv", "x": "0", "y": "3", "color": "Catalyst-C", "lw": 3.5, "label": "Catalyst-C"},
+     {"type": "vline", "x": 209, "color": "#000000", "ls": "--", "lw": 1.8},
+     {"type": "text", "xy": [209, 0.90], "coords": "data", "text": "209", "rotation": 90}
+    ],
+    "legend": {"loc": "upper right", "ncol": 1}
+   }
+  ]
+ }
+}

@@ -1,0 +1,87 @@
+{
+ "id": "09_microscopy-montage",
+ "name": "电镜与能谱拼版 (TEM/HAADF/EDS & SEM Montage)",
+ "category": "microscopy",
+ "figures": ["Fig3", "FigS5"],
+ "when": "Grid montage of microscopy/elemental-mapping raster images (TEM, HAADF-STEM, EDS Si/Al/Cu maps, SEM) with tight pixel gaps, single clean panel letters (A/B/C/D), optional element badges, and scale bar preservation.",
+ "data_contract": {
+  "required_slots": {
+   "images": "Ordered list/grid of raw TIFF/PNG file paths mapped to (row, col) cells."
+  },
+  "optional_slots": {
+   "row_labels": "Row panel letters (e.g. A, B, C for Fig3 3x5 TEM/EDS; A, B, C, D for FigS5 2x2 SEM).",
+   "badges": "Per-cell element/modality badges (e.g. HAADF, Si, Al, Cu) when not burned in or when crisp vector overlay is required.",
+   "scale_bars": "Physical scale bars (50 nm, 100 nm, 1 um) verified against mapping.csv / *.txt acquisition metadata.",
+   "crop": "Optional aspect/square crop specification if source image aspect differs from tile aspect."
+  },
+  "formats": [".tif", ".tiff", ".png"],
+  "x_direction": "image pixels",
+  "y_meaning": "2D micrograph / EDS intensity map",
+  "constraints": [
+   "NEVER draw double panel letters (check whether raw TIFF already has burned-in A/B/C or scale bars before adding vector overlays!).",
+   "For Fig3 (3x5): use 1800x1800 *BF-TEM_1800px.tif + 512x512 HAADF/Si/Al/Cu.tif from data/raw_tem/ (NOT the 4096x4096 raw files unless downsampled cleanly), preserving tight ~2-4px gaps.",
+   "For FigS5 (2x2 SEM): use 1280x960 Fig.S5-A..D.tif from data/raw_sem/ matching PDF aspect 7.09 x 4.94 in."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 7.09,
+  "height_in": 4.24,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 5,
+  "rows": 3,
+  "margins": {"l": 0.01, "r": 0.01, "t": 0.01, "b": 0.01},
+  "gap": [0.008, 0.012]
+ },
+ "style": {
+  "montage": {"gap_px": 4, "panel_letter_size": 14.1, "badge_size": 11.0}
+ },
+ "axes_defaults": {},
+ "blind_mode": {
+  "grid_inference": "auto_rows_x_cols_from_image_count",
+  "aspect_lock": "match_tile_aspect_ratios",
+  "gap_policy": "tight_0.008",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["tighten_tile_gap", "adjust_figure_height_to_match_grid_aspect"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "aspect_ratio_tol": 0.03,
+  "forbid_double_panel_letters": true,
+  "check_tile_alignment": true
+ },
+ "notes": [
+  "Fig3 (3x5): 7.09 x 4.24 in (510.2 x 305.3 pt). Rows = Catalyst-A (A), Catalyst-B (B), Catalyst-C (C); Cols = BF-TEM, HAADF, Si, Al, Cu.",
+  "FigS5 (2x2): 7.09 x 4.94 in (510.2 x 355.3 pt). Panels = Support (A), Catalyst-A (B), Catalyst-B (C), Catalyst-C (D).",
+  "Always cross-check raw TIFF images via read_file before deciding whether scale bars / EDS badges are burned into the bitmap or need vector overlays."
+ ],
+ "spec_template": {
+  "chart": "09_microscopy-montage",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 7.09, "height_in": 4.24, "dpi": 300},
+  "panels": [
+   {
+    "id": "montage",
+    "type": "image_montage",
+    "rect": [0.01, 0.01, 0.98, 0.98],
+    "montage": {
+     "grid": [3, 5],
+     "gap": [0.008, 0.012],
+     "row_letters": ["A", "B", "C"],
+     "images": [
+      {"source": "[[BF_TEM_A]]"},
+      {"source": "[[HAADF_A]]", "badge": "HAADF"},
+      {"source": "[[SI_A]]", "badge": "Si"},
+      {"source": "[[AL_A]]", "badge": "Al"},
+      {"source": "[[CU_A]]", "badge": "Cu"}
+     ]
+    }
+   }
+  ]
+ }
+}

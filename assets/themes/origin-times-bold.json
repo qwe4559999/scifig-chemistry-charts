@@ -1,0 +1,45 @@
+{
+ "name": "origin-times-bold",
+ "source": "Publication vector PDF baseline: Times New Roman Bold, 14.1pt axis labels & panel letters, 10.2pt ticks & legends, 7.0pt sub/superscripts, 1.55pt frames & data lines, 0.80pt dense spectra",
+ "font": {
+  "family": "Times New Roman",
+  "weight": "bold",
+  "style": "normal"
+ },
+ "size": {
+  "label": 14.1,
+  "tick": 10.2,
+  "legend": 10.2,
+  "panel": 14.1,
+  "annot": 7.1,
+  "small": 7.0,
+  "sub": 7.0
+ },
+ "line": {
+  "axis": 1.55,
+  "data": 1.55,
+  "drifts": 0.8,
+  "fit": 0.8,
+  "thin": 0.38
+ },
+ "tick": {
+  "direction": "in",
+  "length": 3.6,
+  "width": 1.55,
+  "pad": 3.5,
+  "minor": false,
+  "top": false,
+  "right": false
+ },
+ "spines": {
+  "lw": 1.55,
+  "all": true
+ },
+ "legend": {
+  "frameon": false,
+  "handlelength": 1.8,
+  "handletextpad": 0.4,
+  "borderaxespad": 0.3
+ },
+ "palette": "publication-pastel"
+}

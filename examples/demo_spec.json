@@ -1,0 +1,28 @@
+{
+ "chart": "01_line-marker-eval",
+ "theme": "journal-nature-arial",
+ "palette": "nature-npg",
+ "figure": {"width_in": 4.2, "height_in": 3.4, "dpi": 300},
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "margins": {"l": 0.15, "r": 0.04, "t": 0.06, "b": 0.16}
+ },
+ "data": {
+  "eval": {"source": "demo_eval.csv"}
+ },
+ "panels": [
+  {
+   "id": "A",
+   "cell": [0, 0],
+   "x": {"label": "Temperature (°C)", "lim": [140, 560], "ticks": [150, 250, 350, 450, 550]},
+   "y": {"label": "NO$_x$ conversion (%)", "lim": [0, 102], "ticks": [0, 20, 40, 60, 80, 100]},
+   "plots": [
+    {"type": "line_marker", "data": "eval", "x": 0, "y": 1, "color": "seq:0", "marker": "s", "ms": 5.0, "lw": 1.35, "label": "Catalyst-A"},
+    {"type": "line_marker", "data": "eval", "x": 0, "y": 2, "color": "seq:1", "marker": "o", "ms": 5.0, "lw": 1.35, "label": "Catalyst-B"},
+    {"type": "line_marker", "data": "eval", "x": 0, "y": 3, "color": "seq:2", "marker": "^", "ms": 5.0, "lw": 1.35, "label": "Catalyst-C"}
+   ],
+   "legend": {"loc": "lower right", "ncol": 1, "note": "GHSV = 50,000 h$^{-1}$"}
+  }
+ ]
+}

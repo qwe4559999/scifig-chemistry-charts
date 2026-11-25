@@ -1,0 +1,74 @@
+{
+ "name": "publication-pastel",
+ "source": "Balanced scientific pastel & categorical hex palette extracted from publication vector PDFs",
+ "sequence": [
+  "#6699BA",
+  "#CCA8E3",
+  "#8CCF8C",
+  "#B00F1A",
+  "#917ABD",
+  "#6657A6",
+  "#ABBDDB",
+  "#7599C2",
+  "#477DB2",
+  "#7D599C"
+ ],
+ "fills": [
+  "#B3CDE4",
+  "#CCEAC4",
+  "#FBB4AE",
+  "#DECAE5",
+  "#B0B0B0"
+ ],
+ "ramps": {
+  "ghsv_purple": [
+   "#CCA8E3",
+   "#917ABD",
+   "#6657A6"
+  ],
+  "so2_purple": [
+   "#CCA8E3",
+   "#7D599C"
+  ],
+  "cha_compare": [
+   "#CCA8E3",
+   "#ABBDDB"
+  ],
+  "cha_ghsv": [
+   "#ABBDDB",
+   "#7599C2",
+   "#477DB2"
+  ],
+  "drifts_12": [
+   "#E0618C",
+   "#E387B0",
+   "#F2C4D9",
+   "#6657A6",
+   "#917ABD",
+   "#B09CCC",
+   "#477DB2",
+   "#7599C2",
+   "#ABBDDB",
+   "#1C9666",
+   "#40BF7A",
+   "#7DD4A6"
+  ]
+ },
+ "series": {
+  "Support": "#B00F1A",
+  "Catalyst-A": "#6699BA",
+  "Catalyst-B": "#CCA8E3",
+  "Catalyst-C": "#8CCF8C",
+  "Catalyst-D": "#ABBDDB",
+  "GHSV-50k": "#CCA8E3",
+  "GHSV-100k": "#917ABD",
+  "GHSV-200k": "#6657A6",
+  "Cond-base": "#CCA8E3",
+  "Cond-alt": "#7D599C",
+  "Series-50k": "#ABBDDB",
+  "Series-100k": "#7599C2",
+  "Series-200k": "#477DB2",
+  "observed": "#000000",
+  "fit": "#B0B0B0"
+ }
+}

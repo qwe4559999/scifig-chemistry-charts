@@ -1,0 +1,116 @@
+{
+ "studio": "SciFigStudio",
+ "version": "2.0.0",
+ "updated_at": "2026-11-26",
+ "root": "./assets",
+ "themes": [
+  {
+   "id": "origin-times-bold",
+   "path": "themes/origin-times-bold.json",
+   "description": "Measured from Catalyst-X publication PDFs: Times New Roman Bold, 14.1pt labels/panel letters, 10.2pt ticks/legends, 1.55pt frames."
+  },
+  {
+   "id": "journal-nature-arial",
+   "path": "themes/journal-nature-arial.json",
+   "description": "Clean sans-serif Nature/ACS-ready compact theme (Arial, 7-8pt ticks/labels) for blind-mode or new submissions."
+  },
+  {
+   "id": "journal-acs-serif",
+   "path": "themes/journal-acs-serif.json",
+   "description": "ACS-style serif publication theme (Times New Roman, 8-9pt labels, outward or inward ticks)."
+  }
+ ],
+ "palettes": [
+  {
+   "id": "publication-pastel",
+   "path": "palettes/publication-pastel.json",
+   "description": "Exact PDF-extracted colors for Support (#B00F1A), Catalyst-A (#6699BA), Catalyst-B (#CCA8E3), Catalyst-C (#8CCF8C), GHSV ramps, deconv fills, and DRIFTS 12-curve ramp."
+  },
+  {
+   "id": "okabe-ito",
+   "path": "palettes/okabe-ito.json",
+   "description": "Colorblind-safe 8-color categorical palette."
+  },
+  {
+   "id": "nature-npg",
+   "path": "palettes/nature-npg.json",
+   "description": "Nature Publishing Group inspired scientific palette."
+  }
+ ],
+ "charts": [
+  {
+   "id": "01_line-marker-eval",
+   "name": "催化评价折线+标记图 (Catalytic Evaluation Line-Marker)",
+   "path": "charts/01_line-marker-eval/chart.json",
+   "workflow": "charts/01_line-marker-eval/workflow.md",
+   "figures": ["Fig1", "FigS1", "FigS2", "FigS3", "FigS4"]
+  },
+  {
+   "id": "02_stacked-spectra",
+   "name": "堆叠光谱图 (Stacked Spectra: XRD / 27Al NMR)",
+   "path": "charts/02_stacked-spectra/chart.json",
+   "workflow": "charts/02_stacked-spectra/workflow.md",
+   "figures": ["Fig2A", "Fig2C"]
+  },
+  {
+   "id": "03_isotherm-psd",
+   "name": "吸附等温线与孔径分布 (N2 Isotherm & Pore Size Distribution)",
+   "path": "charts/03_isotherm-psd/chart.json",
+   "workflow": "charts/03_isotherm-psd/workflow.md",
+   "figures": ["Fig2B", "FigS6"]
+  },
+  {
+   "id": "04_deconv-peak-fit",
+   "name": "多样品无缝堆叠分峰图 (Stacked Deconvolution Peak-Fit)",
+   "path": "charts/04_deconv-peak-fit/chart.json",
+   "workflow": "charts/04_deconv-peak-fit/workflow.md",
+   "figures": ["Fig2D", "Fig4A", "Fig5B"]
+  },
+  {
+   "id": "05_stacked-bar-comp",
+   "name": "100% 堆叠组分柱状图 (Stacked Composition Bar)",
+   "path": "charts/05_stacked-bar-comp/chart.json",
+   "workflow": "charts/05_stacked-bar-comp/workflow.md",
+   "figures": ["Fig4B"]
+  },
+  {
+   "id": "06_single-multi-spectrum",
+   "name": "单面板多曲线光谱+峰标 (Single-Panel Multi-Spectrum: EPR / UV-Vis)",
+   "path": "charts/06_single-multi-spectrum/chart.json",
+   "workflow": "charts/06_single-multi-spectrum/workflow.md",
+   "figures": ["Fig5A", "FigS7"]
+  },
+  {
+   "id": "07_drifts-broken-stack",
+   "name": "原位 DRIFTS 断轴/整轴时间序列堆叠 (In Situ DRIFTS Stack)",
+   "path": "charts/07_drifts-broken-stack/chart.json",
+   "workflow": "charts/07_drifts-broken-stack/workflow.md",
+   "figures": ["Fig6", "FigS9", "FigS10", "FigS11", "FigS12"]
+  },
+  {
+   "id": "08_xps-reverse-deconv",
+   "name": "XPS 倒序结合能分峰堆叠 (XPS Reverse-Axis Deconvolution)",
+   "path": "charts/08_xps-reverse-deconv/chart.json",
+   "workflow": "charts/08_xps-reverse-deconv/workflow.md",
+   "figures": ["FigS8"]
+  },
+  {
+   "id": "09_microscopy-montage",
+   "name": "电镜与能谱拼版 (TEM/HAADF/EDS & SEM Montage)",
+   "path": "charts/09_microscopy-montage/chart.json",
+   "workflow": "charts/09_microscopy-montage/workflow.md",
+   "figures": ["Fig3", "FigS5"]
+  }
+ ],
+ "coverage": {
+  "main_figures": ["Fig1", "Fig2", "Fig3", "Fig4", "Fig5", "Fig6"],
+  "si_figures": ["FigS1", "FigS2", "FigS3", "FigS4", "FigS5", "FigS6", "FigS7", "FigS8", "FigS9", "FigS10", "FigS11", "FigS12"],
+  "total_covered": 18,
+  "coverage_pct": 100.0
+ },
+ "convention": {
+  "spec": "Declarative JSON: figure / layout / data / ops / panels / plots",
+  "engine": "scifig",
+  "skill": "."
+ }
+}

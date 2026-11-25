@@ -1,0 +1,92 @@
+{
+ "id": "03_isotherm-psd",
+ "name": "吸附等温线与孔径分布 (N2 Isotherm & Pore Size Distribution)",
+ "category": "porosity",
+ "figures": ["Fig2B", "FigS6"],
+ "when": "Physisorption characterization: N2 adsorption-desorption isotherms (paired solid/hollow or dual-branch markers vs P/P0) or pore size distribution (dV/dlog(W) vs pore diameter).",
+ "data_contract": {
+  "required_slots": {
+   "x": "Relative pressure P/P0 in [0, 1] for isotherms; Pore diameter (nm) for PSD.",
+   "series": "Paired Adsorption/Desorption columns per sample (Fig2B: 16 cols = 4 samples x 2 branches x (x,y)), OR dV/dlog(W) column per sample (FigS6)."
+  },
+  "optional_slots": {
+   "branch_type": "ads vs des marker style (e.g. filled vs open or differentiated symbol).",
+   "scale_offsets": "Optional y-shift if separating overlapping isotherms (Fig2B uses native unshifted cm3/g STP)."
+  },
+  "formats": [".xlsx", ".xls (ASAP 2020)", ".csv"],
+  "x_direction": "ascending (note: desorption branch in Excel may be stored descending in P/P0 — sort or plot in native order)",
+  "y_meaning": "Quantity adsorbed (cm^3/g STP) or dV/dlog(W) (cm^3/g).",
+  "constraints": [
+   "CRITICAL for FigS6: Plot dV/dlog(W) (labeled 'dV/dlong(W)' in pore_size_dist.xlsx!), NEVER cumulative pore volume.",
+   "Fig2B is a multi-block 16-column sheet where row 0=unit, row 1=sample name (Cu\\-(1.26)-MAZ), row 2+=data.",
+   "FigS6 original PDF is large format (9.00 x 7.68 in, 648x553 pt) with scaled fonts (36pt labels, 26pt ticks, 3.96pt lines) — match visual weight!"
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 9.0,
+  "height_in": 7.68,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "margins": {"l": 0.14, "r": 0.04, "t": 0.06, "b": 0.14}
+ },
+ "style": {
+  "scale": 2.55,
+  "line": {"data": 1.55},
+  "marker": {"size": 4.0}
+ },
+ "axes_defaults": {
+  "x": {"label": "Relative pressure ($P/P_0$) / Pore diameter (nm)"},
+  "y": {"label": "Quantity adsorbed (cm$^3$/g) / dV/dlog(W) (cm$^3$/g)"}
+ },
+ "blind_mode": {
+  "x_range_policy": "0_to_1_for_isotherm_else_data_min_max",
+  "y_range_policy": "0_to_max_pad_10pct",
+  "reverse_x": false,
+  "broken_axis_detection": false,
+  "legend_placement": "upper_right_if_psd_else_upper_left",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["relocate_legend_to_sparsest_corner", "adjust_marker_size_for_density", "expand_ylim_10pct"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "verify_psd_differential_column": true,
+  "check_nan": true
+ },
+ "notes": [
+  "Fig2B: 4 samples (Support, Catalyst-A, Catalyst-B, Catalyst-C), P/P0 0.0-1.0, Quantity adsorbed 0-160 cm3/g STP, matching solid/hollow markers.",
+  "FigS6: Linear x-axis 0.7-5.0 nm, y-axis 0.0-0.7 cm3/g, line + solid circle markers, exact colors (#B00F1A, #6699BA, #CCA8E3, #8CCF8C), top-right legend.",
+  "Note typo in author Excel column header: 'dV/dlong(W)' — display clean 'dV/dlog(W)' on y-axis label."
+ ],
+ "spec_template": {
+  "chart": "03_isotherm-psd",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 9.0, "height_in": 7.68, "dpi": 300},
+  "data": {
+   "psd": {"source": "[[XLSX]]", "sheet": 0, "header": 2}
+  },
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "x": {"label": "Pore Diameter (nm)", "lim": [0.7, 5.0], "ticks": [1, 2, 3, 4, 5]},
+    "y": {"label": "dV/dlog(W) (cm$^3$/g)", "lim": [0.0, 0.7], "ticks": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]},
+    "plots": [
+     {"type": "line_marker", "data": "psd", "x": "0", "y": "1", "color": "Support", "marker": "o", "ms": 5.0, "lw": 2.0, "label": "Support"},
+     {"type": "line_marker", "data": "psd", "x": "2", "y": "3", "color": "Catalyst-A", "marker": "o", "ms": 5.0, "lw": 2.0, "label": "Catalyst-A"},
+     {"type": "line_marker", "data": "psd", "x": "4", "y": "5", "color": "Catalyst-B", "marker": "o", "ms": 5.0, "lw": 2.0, "label": "Catalyst-B"},
+     {"type": "line_marker", "data": "psd", "x": "6", "y": "7", "color": "Catalyst-C", "marker": "o", "ms": 5.0, "lw": 2.0, "label": "Catalyst-C"}
+    ],
+    "legend": {"loc": "upper right", "ncol": 1}
+   }
+  ]
+ }
+}

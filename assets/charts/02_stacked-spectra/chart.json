@@ -1,0 +1,91 @@
+{
+ "id": "02_stacked-spectra",
+ "name": "堆叠光谱图 (Stacked Spectra: XRD / 27Al NMR)",
+ "category": "spectroscopy",
+ "figures": ["Fig2A", "Fig2C"],
+ "when": "Multiple 1D spectra (PXRD patterns, 27Al MAS NMR, Raman, FTIR) stacked vertically inside a single shared frame with explicit vertical offsets and right-side or inline sample labels.",
+ "data_contract": {
+  "required_slots": {
+   "x": "Common or per-series x-axis (2theta in deg ascending for XRD; chemical shift ppm descending for NMR).",
+   "series": "2..6 numeric intensity columns ordered bottom-to-top (e.g. Support, Catalyst-A, Catalyst-B, Catalyst-C)."
+  },
+  "optional_slots": {
+   "offsets": "Explicit per-curve vertical offsets; if raw file already contains pre-stacked offsets (e.g. xrd_stacked.txt), set spec offsets to 0 or re-baseline cleanly.",
+   "peak_guides": "Short vertical dashed guide lines stopping cleanly near peak tops with wavenumber/ppm/2theta labels (e.g. 59, 52, 30, -1 ppm in 27Al NMR)."
+  },
+  "formats": [".txt", ".csv", ".xlsx", ".asc", ".ras", "Bruker TopSpin (fid/1r/procs)"],
+  "x_direction": "ascending for XRD (3-40 deg); descending for NMR (e.g. [90, -25] ppm)",
+  "y_meaning": "Intensity (a.u.) with suppressed numeric y-ticks.",
+  "constraints": [
+   "Do NOT normalize curves independently unless explicitly required to preserve equal baseline spacing; document any baseline/scale factor in spec.",
+   "Check whether input table already includes vertical offsets (xrd_stacked.txt starts at ~0.35, 1.07, 1.64, 2.25).",
+   "For 27Al NMR raw Bruker/TXT files without headers, verify column 1 = ppm and column 2 = real spectrum intensity."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 3.5,
+  "height_in": 2.9,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "margins": {"l": 0.14, "r": 0.04, "t": 0.06, "b": 0.18}
+ },
+ "style": {
+  "line": {"data": 1.55}
+ },
+ "axes_defaults": {
+  "x": {"label": "2$\\theta$ (°) / Chemical shift (ppm)"},
+  "y": {"label": "Intensity (a.u.)", "ticks": []}
+ },
+ "blind_mode": {
+  "x_range_policy": "data_min_max_exact",
+  "y_range_policy": "fit_stacked_min_max_pad_8pct",
+  "reverse_x": "auto_if_nmr_or_ir",
+  "stack_offset_method": "robust_iqr_step",
+  "legend_placement": "inline_right_labels_or_sparse_corner",
+  "annotation_strategy": "top_peaks_short_guides",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["increase_stack_step_15pct", "nudge_inline_labels_above_baseline", "expand_ylim_top_10pct"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "forbid_per_curve_norm": true,
+  "check_nan": true
+ },
+ "notes": [
+  "Fig2A (XRD): 4 curves (Support #B00F1A, Catalyst-A #6699BA, Catalyst-B #CCA8E3, Catalyst-C #8CCF8C) with equal spacing and right-side sample labels clear of curves.",
+  "Fig2C (27Al NMR): compact vertical offset (~0.55 of normalized height) so peaks overlap slightly like reference; short dashed guides at 59, 52, 30, -1 ppm stopping cleanly near peaks instead of spanning full box height.",
+  "XRD .asc files in data/raw_xrd/ contain only intensity (4 values/line); 2theta must be reconstructed from *START/*STOP/*STEP."
+ ],
+ "spec_template": {
+  "chart": "02_stacked-spectra",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 7.09, "height_in": 6.04, "dpi": 300},
+  "data": {
+   "spec_data": {"source": "[[TXT_OR_CSV]]"}
+  },
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "letter": {"text": "A"},
+    "x": {"label": "2$\\theta$ (°)", "lim": [3, 40], "ticks": [10, 20, 30, 40]},
+    "y": {"label": "Intensity (a.u.)", "ticks": []},
+    "plots": [
+     {"type": "line", "data": "spec_data", "x": "0", "y": "1", "color": "Support", "lw": 1.55, "offset": 0.0},
+     {"type": "line", "data": "spec_data", "x": "2", "y": "3", "color": "Catalyst-A", "lw": 1.55, "offset": 0.0},
+     {"type": "line", "data": "spec_data", "x": "4", "y": "5", "color": "Catalyst-B", "lw": 1.55, "offset": 0.0},
+     {"type": "line", "data": "spec_data", "x": "6", "y": "7", "color": "Catalyst-C", "lw": 1.55, "offset": 0.0}
+    ]
+   }
+  ]
+ }
+}

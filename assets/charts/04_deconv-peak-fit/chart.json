@@ -1,0 +1,107 @@
+{
+ "id": "04_deconv-peak-fit",
+ "name": "多样品无缝堆叠分峰图 (Stacked Deconvolution Peak-Fit)",
+ "category": "deconvolution",
+ "figures": ["Fig2D", "Fig4A", "Fig5B"],
+ "when": "Peak-fitted spectra (29Si MAS NMR, NH3-TPD, H2-TPR) showing observed curve, total fit envelope, and N Gaussian/Lorentzian components with Origin-style vertical-gradient pastel fills stacked seamlessly (hspace=0) inside a shared outer frame.",
+ "data_contract": {
+  "required_slots": {
+   "x": "Independent axis (ppm for 29Si NMR; Temperature °C for NH3-TPD / H2-TPR).",
+   "y_obs": "Experimental observed curve.",
+   "y_fit": "Total fitted envelope (sum of components + baseline).",
+   "components": "2..7 deconvolved component peak columns (e.g. Q1-Q4 or S1-S4)."
+  },
+  "optional_slots": {
+   "sample_groups": "3 or 4 samples stacked vertically as subpanels (hspace=0).",
+   "peak_markers": "Short vertical leader ticks + peak labels (Q1-Q4 or S1-S4) on the top subpanel only."
+  },
+  "formats": [".txt (PeakFit 8-col)", ".xls (Origin 29Si matrix)", ".csv", ".xlsx"],
+  "x_direction": "ascending for TPD/TPR (100-700 °C); descending for 29Si NMR (e.g. [-80, -120] ppm)",
+  "y_meaning": "Intensity / TCD signal (a.u.) with numeric y-ticks hidden.",
+  "constraints": [
+   "CRITICAL: Vertical sample order must match reference! Fig4A bottom->top = Support (red), Catalyst-A (blue), Catalyst-B (purple), Catalyst-C (green). Fig5B bottom->top = Catalyst-A, Catalyst-B, Catalyst-C.",
+   "Verify component sum vs total fit (max residual < 1e-6 or document baseline term).",
+   "Use vertical gradient fills (top-to-bottom fading to white, NOT flat uniform alpha which turns overlap regions muddy brown)."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 3.55,
+  "height_in": 2.93,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "hspace": 0.0,
+  "margins": {"l": 0.14, "r": 0.03, "t": 0.06, "b": 0.18}
+ },
+ "style": {
+  "line": {"data": 1.18, "fit": 0.8},
+  "fill": {"gradient": true, "alpha": 0.85, "edge": true}
+ },
+ "axes_defaults": {
+  "x": {"label": "Temperature (°C) / Chemical shift (ppm)"},
+  "y": {"label": "Intensity (a.u.)", "ticks": []}
+ },
+ "blind_mode": {
+  "x_range_policy": "data_trim_active_region",
+  "y_range_policy": "per_subpanel_0_to_max_pad_15pct",
+  "reverse_x": "auto_if_nmr",
+  "subpanel_stacking": "seamless_hspace_0",
+  "legend_placement": "right_inline_sample_labels",
+  "annotation_strategy": "top_subpanel_peak_centers",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["increase_subpanel_top_pad_15pct", "flip_label_below_peak_if_near_top", "adjust_fill_alpha"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "check_deconv_sum": true,
+  "deconv_residual_tol": 1e-2,
+  "check_nan": true
+ },
+ "notes": [
+  "PeakFit TXT files have line 0 = source path metadata (`skiprows: 1`, `header: false`): cols = [X_obs, Y_obs, X_gen, Y_gen, Peak1, Peak2, Peak3, Peak4].",
+  "Peak1..4 column order may NOT match left-to-right S1..S4 order — always verify peak center x!",
+  "Fill colors: #B3CDE4 (S1/Q1 blue), #CCEAC4 (S2/Q2 green), #FBB4AE (S3/Q3 salmon), #DECAE5 (S4/Q4 lilac), #B0B0B0 (extra/fit).",
+  "Seamless subpanels share one outer frame (1.55 pt) with crisp internal horizontal dividers (1.0-1.55 pt) and independent y-limits (document in QA that peak heights are normalized per subpanel)."
+ ],
+ "spec_template": {
+  "chart": "04_deconv-peak-fit",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 3.55, "height_in": 2.93, "dpi": 300},
+  "data": {
+   "s1": {"source": "[[TXT]]", "header": false, "skiprows": 1, "columns": {"0": "x", "1": "obs", "3": "fit", "4": "p1", "5": "p2", "6": "p3", "7": "p4"}}
+  },
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "letter": {"text": "A"},
+    "x": {"label": "Temperature (°C)", "lim": [100, 700], "ticks": [100, 200, 300, 400, 500, 600, 700]},
+    "y": {"label": "TCD signal (a.u.)", "ticks": []},
+    "stack_order": "bottom_to_top",
+    "subpanels": [
+     {
+      "id": "Support",
+      "y": {"lim": [0, 1.15]},
+      "sample_label": {"text": "Support", "loc": "upper right", "color": "Support"},
+      "plots": [
+       {"type": "fill", "data": "s1", "x": "x", "y": "p1", "color": "fill:0", "gradient": true, "edge": true},
+       {"type": "fill", "data": "s1", "x": "x", "y": "p2", "color": "fill:1", "gradient": true, "edge": true},
+       {"type": "fill", "data": "s1", "x": "x", "y": "p3", "color": "fill:2", "gradient": true, "edge": true},
+       {"type": "fill", "data": "s1", "x": "x", "y": "p4", "color": "fill:3", "gradient": true, "edge": true},
+       {"type": "line", "data": "s1", "x": "x", "y": "fit", "color": "Support", "lw": 1.18},
+       {"type": "line", "data": "s1", "x": "x", "y": "obs", "color": "#B0B0B0", "lw": 0.8}
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

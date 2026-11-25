@@ -1,0 +1,103 @@
+{
+ "id": "08_xps-reverse-deconv",
+ "name": "XPS 倒序结合能分峰堆叠 (XPS Reverse-Axis Deconvolution)",
+ "category": "deconvolution",
+ "figures": ["FigS8"],
+ "when": "Core-level XPS spectra (e.g. Cu 2p) plotted on a reverse Binding Energy (eV) axis with stacked samples, experimental envelope, fitted sum, Shirley/linear background, and shaded oxidation-state / satellite component peaks.",
+ "data_contract": {
+  "required_slots": {
+   "x": "Binding Energy (eV), reverse axis (high -> low, e.g. [970, 926] eV).",
+   "y_obs": "Experimental intensity (Counts/s or a.u.).",
+   "y_fit": "Fitted envelope.",
+   "components": "Fitted component peaks (e.g. Cu+, Cu2+, satellite peaks) + Background."
+  },
+  "optional_slots": {
+   "sample_groups": "3 stacked samples (e.g. Catalyst-A, Catalyst-B, Catalyst-C) in seamless or shared-x stacked layout.",
+   "peak_labels": "Oxidation state / orbital labels (Cu+, Cu2+, Sat., Cu 2p3/2, Cu 2p1/2)."
+  },
+  "formats": [".xlsx (xps_deconv.xlsx / .DATA/*.xlsx)", ".VGD (Thermo Avantage OLE2 VGData float64 counts)", ".csv"],
+  "x_direction": "descending (reverse Binding Energy eV)",
+  "y_meaning": "Intensity (a.u.) with numeric y-ticks suppressed.",
+  "constraints": [
+   "Reverse Binding Energy x-axis (high eV on left, low eV on right) MUST be preserved.",
+   "If using raw .VGD files: VGData stream stores float64 raw COUNTS (not float32, not cps). Convert via cps = counts / (0.05 s * scans) or use exported Counts/s in xps_deconv.xlsx.",
+   "FigS8 original PDF is large format (8.49 x 7.46 in, 611x537 pt) with bold scaled fonts (36pt labels, 26pt ticks, 3.96pt frames) — match 1:1 visual weight!"
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 8.49,
+  "height_in": 7.46,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "hspace": 0.0,
+  "margins": {"l": 0.13, "r": 0.04, "t": 0.05, "b": 0.14}
+ },
+ "style": {
+  "scale": 2.55,
+  "line": {"data": 1.55, "fit": 0.8},
+  "fill": {"gradient": true, "alpha": 0.85, "edge": true}
+ },
+ "axes_defaults": {
+  "x": {"label": "Binding Energy (eV)"},
+  "y": {"label": "Intensity (a.u.)", "ticks": []}
+ },
+ "blind_mode": {
+  "x_range_policy": "data_min_max_exact_reversed",
+  "y_range_policy": "per_subpanel_baseline_to_max_pad_15pct",
+  "reverse_x": true,
+  "subpanel_stacking": "seamless_hspace_0",
+  "legend_placement": "inline_sample_and_species_labels",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["reverse_xlim_if_ascending", "increase_top_pad_15pct", "adjust_component_label_positions"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "require_reverse_x": true,
+  "check_deconv_sum": true,
+  "check_nan": true
+ },
+ "notes": [
+  "In xps_deconv.xlsx, 3 sample blocks sit side-by-side in 23 columns (cols 0-6 Catalyst-C, cols 8-14 Catalyst-B, cols 16-22 Catalyst-A) with NaN separator columns (7, 15).",
+  "Note Avantage .vgp files cannot be opened without Avantage; all component curves and Table S3 ratios are already exported in data/xps/.",
+  "Fill components from local Background baseline (not y=0) so shaded peaks sit cleanly on the Shirley background!"
+ ],
+ "spec_template": {
+  "chart": "08_xps-reverse-deconv",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 8.49, "height_in": 7.46, "dpi": 300},
+  "data": {
+   "xps": {"source": "[[XLSX]]", "sheet": 0, "header": 2}
+  },
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "x": {"label": "Binding Energy (eV)", "lim": [968, 926], "ticks": [965, 960, 955, 950, 945, 940, 935, 930]},
+    "y": {"label": "Intensity (a.u.)", "ticks": []},
+    "stack_order": "bottom_to_top",
+    "subpanels": [
+     {
+      "id": "Catalyst-C",
+      "sample_label": {"text": "Catalyst-C", "loc": "upper left"},
+      "plots": [
+       {"type": "fill", "data": "xps", "x": "0", "y": "3", "baseline": "6", "color": "fill:0", "gradient": true},
+       {"type": "fill", "data": "xps", "x": "0", "y": "4", "baseline": "6", "color": "fill:1", "gradient": true},
+       {"type": "fill", "data": "xps", "x": "0", "y": "5", "baseline": "6", "color": "fill:3", "gradient": true},
+       {"type": "line", "data": "xps", "x": "0", "y": "2", "color": "Catalyst-C", "lw": 2.4},
+       {"type": "line", "data": "xps", "x": "0", "y": "1", "color": "#000000", "lw": 2.0}
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

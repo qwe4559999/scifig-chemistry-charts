@@ -1,0 +1,26 @@
+{
+ "name": "okabe-ito",
+ "source": "Okabe & Ito colorblind-safe 8-color palette",
+ "sequence": [
+  "#E69F00",
+  "#56B4E9",
+  "#009E73",
+  "#F0E442",
+  "#0072B2",
+  "#D55E00",
+  "#CC79A7",
+  "#000000"
+ ],
+ "fills": [
+  "#F5D9A8",
+  "#CDE9F6",
+  "#A8D9C8",
+  "#FAF3B8",
+  "#A8C4DC",
+  "#F0C1AC",
+  "#EBC8D9",
+  "#B0B0B0"
+ ],
+ "ramps": {},
+ "series": {}
+}

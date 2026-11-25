@@ -1,0 +1,100 @@
+{
+ "id": "01_line-marker-eval",
+ "name": "催化评价折线+标记图 (Catalytic Evaluation Line-Marker)",
+ "category": "catalytic-evaluation",
+ "figures": ["Fig1", "FigS1", "FigS2", "FigS3", "FigS4"],
+ "when": "Multiple catalysts, GHSV conditions, or poison/comparison runs evaluated across a discrete temperature/time grid (NOx conversion, N2 selectivity, N2O/NO2 byproduct concentration).",
+ "data_contract": {
+  "required_slots": {
+   "x": "Discrete independent variable column (e.g. Temperature in °C, 150-550 °C).",
+   "series": "1..N numeric y-columns representing sample or condition curves (e.g. Catalyst-A, Catalyst-B, Catalyst-C, or GHSV 50k/100k/200k)."
+  },
+  "optional_slots": {
+   "panels": "Multi-sheet Excel or multi-file mapping for 1x2 (FigS2-S4) or 2x2 (Fig1, FigS1) grids.",
+   "note": "Fixed condition text aligned below legend (e.g. GHSV = 50,000 h^-1 or Catalyst-B).",
+   "sd_columns": "Optional replicate standard deviation columns; retained in provenance/QA only unless reference explicitly draws error bars."
+  },
+  "formats": [".xlsx", ".csv", ".txt"],
+  "x_direction": "ascending",
+  "y_meaning": "Conversion/Selectivity (%) in [0, 100] or byproduct concentration (ppm) in [0, 50].",
+  "constraints": [
+   "Excel exports from Origin often have 3 header rows: row 0 = quantity, row 1 = unit (may contain Origin escapes like \\f:Times New Roman), row 2 = sample name (e.g. Cu\\-(1.26)-MAZ). Strip/parse cleanly.",
+   "Do NOT draw error bars unless present in original reference.",
+   "Do NOT silently alter source table values when source-vs-figure discrepancy exists (e.g. Fig1A Catalyst-A at 200/250 °C: plot source table values and log discrepancy in provenance)."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 7.09,
+  "height_in": 6.0,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 2,
+  "rows": 2,
+  "margins": {"l": 0.11, "r": 0.03, "t": 0.06, "b": 0.11},
+  "gap": [0.13, 0.14]
+ },
+ "style": {
+  "line": {"data": 1.55},
+  "marker": {"size": 5.0, "filled": true}
+ },
+ "axes_defaults": {
+  "x": {"label": "Temperature (°C)"},
+  "y": {"label": "NO$_x$ conversion (%)"}
+ },
+ "blind_mode": {
+  "x_range_policy": "data_min_max_pad_5pct",
+  "y_range_policy": "fixed_0_102_if_percent_else_0_to_nice_ceil",
+  "reverse_x": false,
+  "broken_axis_detection": false,
+  "legend_placement": "sparse_corner_search",
+  "marker_cycle": ["s", "o", "^", "D", "v"],
+  "preprocessing_default": [],
+  "auto_repair_actions": ["relocate_legend_to_sparsest_corner", "expand_ylim_5pct", "adjust_margins_for_labels"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "forbid_autoscale_y_when_fixed": true,
+  "check_nan": true,
+  "fixed_ranges": {
+   "conversion_pct": [0, 102],
+   "selectivity_pct": [0, 102],
+   "figS1_byproduct_ppm": [0, 50]
+  }
+ },
+ "notes": [
+  "Fig1 & FigS1 are 2x2 (~7.09 x 6.0 in); FigS2, FigS3, FigS4 are 1x2 (~7.09 x 3.08 in).",
+  "FigS1 MUST lock y-axis to [0, 50] ppm across all 4 panels (N2O and NO2) so visual magnitude is directly comparable.",
+  "Use solid filled markers matching line color (mfc=color, mec=color).",
+  "Render chemical subscripts in bold upright/mathtext without italicizing numbers (e.g. Catalyst-A, NO$_x$, N$_2$, 50,000 h$^{-1}$)."
+ ],
+ "spec_template": {
+  "chart": "01_line-marker-eval",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 7.09, "height_in": 5.97, "dpi": 300},
+  "data": {
+   "panel_a": {"source": "[[XLSX]]", "sheet": 0, "header": 2}
+  },
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "letter": {"text": "A"},
+    "x": {"label": "Temperature (°C)", "lim": [140, 560], "ticks": [150, 250, 350, 450, 550]},
+    "y": {"label": "NO$_x$ conversion (%)", "lim": [0, 102], "ticks": [0, 20, 40, 60, 80, 100]},
+    "plots": [
+     {"type": "line_marker", "data": "panel_a", "x": "0", "y": "1", "color": "Catalyst-A", "marker": "s", "ms": 5.0, "lw": 1.55, "label": "Catalyst-A"},
+     {"type": "line_marker", "data": "panel_a", "x": "0", "y": "2", "color": "Catalyst-B", "marker": "o", "ms": 5.0, "lw": 1.55, "label": "Catalyst-B"},
+     {"type": "line_marker", "data": "panel_a", "x": "0", "y": "3", "color": "Catalyst-C", "marker": "^", "ms": 5.0, "lw": 1.55, "label": "Catalyst-C"}
+    ],
+    "legend": {"loc": "lower right", "ncol": 1}
+   }
+  ]
+ }
+}

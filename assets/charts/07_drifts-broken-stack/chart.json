@@ -1,0 +1,99 @@
+{
+ "id": "07_drifts-broken-stack",
+ "name": "原位 DRIFTS 断轴/整轴时间序列堆叠 (In Situ DRIFTS Stack)",
+ "category": "spectroscopy",
+ "figures": ["Fig6", "FigS9", "FigS10", "FigS11", "FigS12"],
+ "when": "In situ DRIFTS time-series (e.g. 12 spectra: 1-60 min + N2 purge) or catalyst comparison stacks across reverse wavenumber axes, optionally with a broken x-axis omitting the silent C-H/CO2 window (3300-1800 cm^-1).",
+ "data_contract": {
+  "required_slots": {
+   "x": "Wavenumber (cm^-1), reverse axis (high -> low).",
+   "series": "Time-ordered or sample-ordered absorbance / Kubelka-Munk columns (typically 12 curves: 1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60 min + N2 purge 60 min, or 3 catalysts)."
+  },
+  "optional_slots": {
+   "segments": "Broken x-axis segments [[3800, 3300, w1], [1800, 800, w2]] with break_gap; omit for unbroken panels like FigS10 (1800-1200 cm^-1)!",
+   "vlines": "Vertical dashed peak markers scoped to specific segment index (`seg: 0` or `seg: 1`) with non-overlapping wavenumber labels.",
+   "inline_time_labels": "Right-side in-frame time labels (1 min .. 60 min, N2 purge 60 min) positioned cleanly above each curve tail."
+  },
+  "formats": [".xlsx (09_in situ DRIFTS union-x tables)", ".csv", ".spa (OMNIC 1884B header + float32)"],
+  "x_direction": "descending (reverse wavenumber)",
+  "y_meaning": "Absorbance (a.u.) or Kubelka-Munk (a.u.) with numeric y-ticks suppressed.",
+  "constraints": [
+   "CRITICAL: Check whether each figure uses broken axis or unbroken axis! Fig6, FigS9, FigS11, FigS12 use broken axis (3800-3300 & 1800-800); FigS10 is UNBROKEN 1800-1200 cm^-1!",
+   "Summary Excel files in data/drifts/ use union of x-grids across CSVs -> boundary cells can be NaN; enable dropna: true per curve.",
+   "Apply transparent ops (baseline_min / baseline_linear / savgol / explicit scale & offset) so curves are crisp and NOT flat, and log every op to .provenance.json.",
+   "NEVER normalize curves individually — preserve relative band growth/decay over time."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 7.09,
+  "height_in": 6.02,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 2,
+  "rows": 2,
+  "break_gap": 0.018,
+  "margins": {"l": 0.09, "r": 0.03, "t": 0.05, "b": 0.11},
+  "gap": [0.10, 0.12]
+ },
+ "style": {
+  "line": {"data": 0.80}
+ },
+ "axes_defaults": {
+  "x": {"label": "Wavenumber (cm$^{-1}$)"},
+  "y": {"label": "Absorbance (a.u.) / Kubelka-Munk (a.u.)", "ticks": []}
+ },
+ "blind_mode": {
+  "x_range_policy": "detect_bimodal_peaks_for_broken_3800_3300_and_1800_800_else_active_band",
+  "y_range_policy": "fit_stacked_min_max_pad_10pct",
+  "reverse_x": true,
+  "broken_axis_detection": "bimodal_silent_window_2000_3200",
+  "stack_offset_method": "robust_iqr_or_fixed_step",
+  "legend_placement": "in_frame_right_time_labels",
+  "annotation_strategy": "segment_scoped_top_peaks_staggered",
+  "preprocessing_default": [{"op": "baseline_min"}],
+  "auto_repair_actions": ["increase_stack_step_15pct", "stagger_crowded_wavenumber_labels", "adjust_y_scale_if_flat"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "forbid_per_curve_norm": true,
+  "check_break_marks_parallel": true,
+  "check_nan": true
+ },
+ "notes": [
+  "12-curve DRIFTS color ramp bottom->top: #E0618C -> #E387B0 -> #F2C4D9 -> #6657A6 -> #917ABD -> #ABBDDB -> #4099AB -> #7DD4A6 -> #40BF7A -> #1C9666.",
+  "Wide 1x3 figures (FigS9 7.09x2.12 in, FigS10 7.09x2.08 in) use smaller PDF-matched sizes: labels ~9.9pt, ticks ~7.1pt, annotations ~4.9pt, frame 1.08pt, curves 0.56pt.",
+  "1x2 figures (FigS11, FigS12 at 7.09x3.01 in) & 2x2 Fig6 (7.09x6.02 in) use standard 14.1/10.2/7.1pt, frame 1.55pt, curves 0.80pt.",
+  "Author OMNIC smoothing/baseline settings are not stored in the package; any savgol/baseline op used in reproduction must be explicitly documented in spec.ops and provenance."
+ ],
+ "spec_template": {
+  "chart": "07_drifts-broken-stack",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 7.09, "height_in": 3.01, "dpi": 300},
+  "data": {
+   "drifts": {"source": "[[XLSX]]", "sheet": 0}
+  },
+  "ops": [
+   {"op": "baseline_min", "data": "drifts"}
+  ],
+  "panels": [
+   {
+    "id": "A",
+    "cell": [0, 0],
+    "letter": {"text": "A"},
+    "segments": [[3800, 3300, 1.05], [1800, 800, 2.10]],
+    "x": {"label": "Wavenumber (cm$^{-1}$)", "ticks": [3600, 3400, 1800, 1600, 1400, 1200, 1000, 800]},
+    "y": {"label": "Kubelka-Munk (a.u.)", "ticks": []},
+    "plots": [
+     {"type": "lines", "data": "drifts", "x": "0", "y": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"], "lw": 0.80, "dropna": true}
+    ]
+   }
+  ]
+ }
+}

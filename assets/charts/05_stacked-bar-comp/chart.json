@@ -1,0 +1,101 @@
+{
+ "id": "05_stacked-bar-comp",
+ "name": "100% 堆叠组分柱状图 (Stacked Composition Bar)",
+ "category": "composition",
+ "figures": ["Fig4B"],
+ "when": "100% (or fixed-total) stacked bar chart comparing component proportions (e.g. acid site S1-S4 distributions or Cu speciation percentages) across catalysts with vertical gradient bar fills, centered bold percentage labels, top horizontal gradient legend, and rotated x-axis sample labels.",
+ "data_contract": {
+  "required_slots": {
+   "group": "Sample category label column (e.g. Support, Catalyst-A, Catalyst-B, Catalyst-C).",
+   "components": "2..6 numeric percentage columns (e.g. S1, S2, S3, S4) summing to ~100% per sample."
+  },
+  "optional_slots": {
+   "labels": "Display names for component legend (e.g. S1, S2, S3, S4).",
+   "tick_rotation": "Rotation angle for sample names on x-axis (20 deg in Fig4B)."
+  },
+  "formats": [".xlsx", ".csv", ".txt"],
+  "x_direction": "categorical (ordered by catalyst series)",
+  "y_meaning": "Relative percentage (%) from 0 to 100.",
+  "constraints": [
+   "Use fixed component palette (fill:0..3 = #B3CDE4, #CCEAC4, #FBB4AE, #DECAE5) matching the paired deconvolution panel (Fig4A) — colors follow component species, NOT sample identity.",
+   "Do NOT silently re-normalize integer-rounded percentages unless noted (e.g. Support 40+20+28+11 = 99% in acid_site_comp.xlsx — check whether y_lim=[0, 100] or normalized).",
+   "Render vertical gradient fill inside each stacked bar AND matching gradient patches in the top horizontal legend."
+  ]
+ },
+ "theme": "origin-times-bold",
+ "palette": "publication-pastel",
+ "figure": {
+  "width_in": 3.55,
+  "height_in": 2.93,
+  "dpi": 300
+ },
+ "layout": {
+  "cols": 1,
+  "rows": 1,
+  "margins": {"l": 0.16, "r": 0.03, "t": 0.12, "b": 0.22}
+ },
+ "style": {
+  "bar": {"width": 0.58, "gradient": true, "edgecolor": "#000000", "lw": 0.6}
+ },
+ "axes_defaults": {
+  "x": {"label": ""},
+  "y": {"label": "Relative percentage (%)", "lim": [0, 100], "ticks": [0, 20, 40, 60, 80, 100]}
+ },
+ "blind_mode": {
+  "x_range_policy": "categorical_padding_0.6",
+  "y_range_policy": "fixed_0_100_if_sum_near_100_else_sum_pad_10pct",
+  "reverse_x": false,
+  "legend_placement": "top_horizontal_outside_or_upper_band",
+  "value_labels": "centered_bold_inside_bars",
+  "preprocessing_default": [],
+  "auto_repair_actions": ["rotate_xticklabels_20deg", "expand_top_margin_for_legend", "hide_value_label_if_bar_height_lt_5pct"]
+ },
+ "qa_rules": {
+  "max_text_overlap": 0,
+  "allow_clipping": false,
+  "legend_data_overlap": false,
+  "aspect_ratio_tol": 0.03,
+  "check_bar_sum_near_100": true,
+  "check_nan": true
+ },
+ "notes": [
+  "Fig4B: 4 samples (Support, Catalyst-A, Catalyst-B, Catalyst-C) with 20-deg rotated bold x-tick labels.",
+  "Centered bold integer percentage labels inside each bar segment.",
+  "Top horizontal 4-column legend with gradient patches matching bar fills.",
+  "Excel file acid_site_comp.xlsx has Origin subscript escapes (Cu\\-(1.26)-MAZ) and header at row 1 (S1..S4)."
+ ],
+ "spec_template": {
+  "chart": "05_stacked-bar-comp",
+  "theme": "origin-times-bold",
+  "palette": "publication-pastel",
+  "figure": {"width_in": 7.09, "height_in": 2.93, "dpi": 300},
+  "data": {
+   "comp": {"source": "[[XLSX]]", "sheet": 0, "header": 2}
+  },
+  "panels": [
+   {
+    "id": "B",
+    "cell": [0, 1],
+    "letter": {"text": "B"},
+    "tick_rotation": 20,
+    "x": {"label": ""},
+    "y": {"label": "Relative percentage (%)", "lim": [0, 100], "ticks": [0, 20, 40, 60, 80, 100]},
+    "plots": [
+     {
+      "type": "bar_stacked",
+      "data": "comp",
+      "x": null,
+      "y": ["S1", "S2", "S3", "S4"],
+      "colors": ["fill:0", "fill:1", "fill:2", "fill:3"],
+      "labels": ["S1", "S2", "S3", "S4"],
+      "gradient": true,
+      "values": true,
+      "width": 0.58,
+      "ticklabels": ["Support", "Catalyst-A", "Catalyst-B", "Catalyst-C"]
+     }
+    ],
+    "legend": {"loc": "upper center", "bbox": [0.5, 1.12], "ncol": 4}
+   }
+  ]
+ }
+}

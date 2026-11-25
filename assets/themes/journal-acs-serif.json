@@ -1,0 +1,45 @@
+{
+ "name": "journal-acs-serif",
+ "source": "ACS / Catalysis serif journal style (Times New Roman, closed box, inward ticks, Okabe-Ito palette)",
+ "font": {
+  "family": "Times New Roman",
+  "weight": "normal",
+  "style": "normal"
+ },
+ "size": {
+  "label": 9.5,
+  "tick": 8.0,
+  "legend": 8.0,
+  "panel": 11.0,
+  "annot": 7.0,
+  "small": 6.5,
+  "sub": 6.5
+ },
+ "line": {
+  "axis": 1.0,
+  "data": 1.25,
+  "drifts": 0.75,
+  "fit": 0.75,
+  "thin": 0.45
+ },
+ "tick": {
+  "direction": "in",
+  "length": 3.0,
+  "width": 1.0,
+  "pad": 2.8,
+  "minor": false,
+  "top": true,
+  "right": true
+ },
+ "spines": {
+  "lw": 1.0,
+  "all": true
+ },
+ "legend": {
+  "frameon": false,
+  "handlelength": 1.7,
+  "handletextpad": 0.4,
+  "borderaxespad": 0.25
+ },
+ "palette": "okabe-ito"
+}
