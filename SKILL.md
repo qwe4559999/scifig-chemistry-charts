@@ -1,11 +1,11 @@
 ---
 name: scifig-chemistry-charts
-description: End-to-end declarative scientific figure generation and paper reproduction for chemistry, catalysis, spectroscopy, deconvolution, and microscopy data using SciFigStudio (scifig). Supports Mode 1 (Reference-Anchored Reproduction from vector PDF blueprints) and Mode 2 (Blind Data-to-Figure Generation via blind_planner with automated QA repair), plus direct ingestion of .spa, .VGD, .asc, .ras, .spc, Bruker TopSpin NMR, and SEM/TEM TIFFs without Origin COM dependency.
+description: End-to-end declarative scientific figure generation, paper reproduction, and interactive visual editing for chemistry, catalysis, spectroscopy, deconvolution, and microscopy data using SciFigStudio (scifig). Supports Mode 1 (Reference-Anchored Reproduction from vector PDF blueprints), Mode 2 (Blind Data-to-Figure Generation via blind_planner with automated QA repair), and Mode 3 (Interactive Human-AI GUI Workbench with live drag handles, local AI micro-edits, real-time QA guardrails, and bidirectional spec.json sync), plus direct ingestion of .spa, .VGD, .asc, .ras, .spc, Bruker TopSpin NMR, and SEM/TEM TIFFs without Origin COM dependency.
 ---
 
 # SciFig Chemistry Charts (`scifig-chemistry-charts`)
 
-Declarative scientific figure skill powered by `.` (`scifig`). Consolidates 9 canonical chemistry chart workflows (`01_line-marker-eval` through `09_microscopy-montage`), vector-PDF-measured themes/palettes, raw instrument readers, automated visual/numerical QA gates, and reference-free blind plotting.
+Declarative scientific figure skill powered by `.` (`scifig`). Consolidates 9 canonical chemistry chart workflows (`01_line-marker-eval` through `09_microscopy-montage`), vector-PDF-measured themes/palettes, raw instrument readers, automated visual/numerical QA gates, reference-free blind plotting, and the Interactive Human-AI GUI Workbench.
 
 ## 0. Environment & Health Check
 
@@ -78,6 +78,27 @@ python scripts/run_scifig.py blind --data <path> --chart 01_line-marker-eval --t
 
 ---
 
+## Mode 3: Interactive Human-AI GUI Workbench
+
+Use after Mode 1 or Mode 2 (or standalone with built-in synthetic demos) when the user wants WYSIWYG mouse dragging, local AI micro-edits, live QA collision guardrails, and bidirectional `spec.json` synchronization.
+
+**Launch commands:**
+```bash
+python scripts/run_scifig.py workbench --port 8765
+# Or directly when installed via pip:
+scifig-workbench --port 8765
+# Windows / macOS / Linux one-click launchers:
+launch_workbench.bat   # or ./launch_workbench.sh
+```
+
+**Core workbench capabilities:**
+- **Direct Manipulation & Snap Guides**: Drag peak text labels, vertical dashed peak lines (`vline`), legends, sample labels, and panel letters directly on the canvas; coordinates write back to `spec.json` with Undo/Redo.
+- **Local AI Micro-Editing Bar**: Execute bilingual offline NLU commands (e.g., `"补充 724 nm 峰标"`, `"上移顶层曲线 0.04"`, `"图例移至左上角"`, `"切换 Nature Arial 主题"`, `"自动修复 QA 碰撞"`) or optional OpenAI-compatible LLM (`SCIFIG_LLM_API_KEY`).
+- **Real-Time QA Guardrail & Journal Preflight**: Highlights text overlaps, clipping, or legend occlusions in red with one-click Auto-Fix, checks column width / 600 DPI / min font `>= 6.0 pt`, and verifies raw data SHA-256 read-only provenance.
+- **Publication Export**: One-click export of editable `SVG`, vector `PDF`, `600 DPI PNG`, and saved `spec.json`.
+
+---
+
 ## 9 Canonical Chemistry Chart Types
 
 See `references/chart-type-workflows.md` for full slot contracts and pitfalls:
@@ -95,4 +116,4 @@ See `references/chart-type-workflows.md` for full slot contracts and pitfalls:
 - `references/chart-type-workflows.md` — Slot contracts, preprocessing rules, and pitfalls for all 9 chart types.
 - `references/style-and-qa-rules.md` — Measured PDF font/stroke/color baselines (standard, wide 1×3, large single-panel) and QA gate criteria.
 - `references/instrument-formats.md` — Binary/text specs for `.spa`, `.VGD`, `.asc`, `.ras`, `.spc`, Bruker TopSpin, `.tif`, and proprietary boundaries (`.vgp`, `.raw`).
-- `scripts/run_scifig.py` — Cross-platform UTF-8 wrapper invoking `scifig` CLI and `scifig.blind_planner`.
+- `scripts/run_scifig.py` — Cross-platform UTF-8 wrapper invoking `scifig` CLI, `scifig.blind_planner`, and `scifig workbench`.

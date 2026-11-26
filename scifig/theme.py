@@ -4,11 +4,31 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
 from pathlib import Path
 import matplotlib as mpl
 
 ASSETS_ENV = "SCIFIG_ASSETS"
-DEFAULT_ASSETS = Path(__file__).resolve().parents[1] / "assets"
+
+
+def _default_assets_dir() -> Path:
+    candidates: list[Path] = []
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        mp = Path(meipass)
+        candidates.extend([mp / "assets", mp / "scifig" / "assets"])
+    if getattr(sys, "frozen", False):
+        exe_dir = Path(sys.executable).resolve().parent
+        candidates.extend([exe_dir / "assets", exe_dir / "_internal" / "assets"])
+    pkg_dir = Path(__file__).resolve().parent
+    candidates.extend([pkg_dir.parent / "assets", pkg_dir / "assets"])
+    for cand in candidates:
+        if (cand / "themes").is_dir():
+            return cand
+    return pkg_dir.parent / "assets"
+
+
+DEFAULT_ASSETS = _default_assets_dir()
 
 BASE_THEME = {
     "name": "origin-times-bold",
@@ -32,7 +52,11 @@ BASE_THEME = {
 
 def assets_root() -> Path:
     env = os.environ.get(ASSETS_ENV)
-    return Path(env) if env else DEFAULT_ASSETS
+    if env:
+        p = Path(env)
+        if p.exists():
+            return p
+    return _default_assets_dir()
 
 
 def _read_json(p: Path) -> dict:

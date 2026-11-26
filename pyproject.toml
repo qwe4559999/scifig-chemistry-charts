@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scifig-chemistry-charts"
+version = "2.1.0"
+description = "Origin-free declarative scientific figure engine, 9-type chemistry chart asset library, AI agent skill, and Interactive Human-AI GUI Workbench."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+  {name = "qwe4559999"}
+]
+keywords = ["scientific-figures", "chemistry", "catalysis", "spectroscopy", "matplotlib", "workbench", "origin-free", "ai-skill"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Chemistry",
+  "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+  "matplotlib>=3.8",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "scipy>=1.11",
+  "pillow>=10.0",
+  "openpyxl>=3.1",
+  "xlrd>=2.0",
+  "olefile>=0.46",
+  "pymupdf>=1.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/qwe4559999/scifig-chemistry-charts"
+Repository = "https://github.com/qwe4559999/scifig-chemistry-charts"
+Issues = "https://github.com/qwe4559999/scifig-chemistry-charts/issues"
+
+[project.scripts]
+scifig = "scifig.cli:main"
+scifig-workbench = "scifig.workbench_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scifig*"]
+
+[tool.setuptools.package-data]
+scifig = ["workbench_static/*"]

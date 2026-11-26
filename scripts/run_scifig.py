@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cross-platform UTF-8 CLI wrapper for 14_SciFigStudio_20261126 (`scifig`)."""
+"""Cross-platform UTF-8 CLI wrapper for SciFigStudio (`scifig`)."""
 from __future__ import annotations
 
 import os
@@ -16,16 +16,12 @@ def find_studio_root() -> Path:
             return p
 
     here = Path(__file__).resolve()
-    # Standard location: 14_SciFigStudio_20261126/skill/scifig-chemistry-charts/scripts/run_scifig.py
     for parent in here.parents:
         if (parent / "scifig").is_dir() and (parent / "assets").is_dir():
             return parent
-        cand = parent / "14_SciFigStudio_20261126"
-        if (cand / "scifig").is_dir() and (cand / "assets").is_dir():
-            return cand
 
     raise FileNotFoundError(
-        "Could not locate 14_SciFigStudio_20261126 root (set SCIFIG_ROOT env var if skill was copied externally)."
+        "Could not locate scifig-chemistry-charts root (set SCIFIG_ROOT env var if skill was copied externally)."
     )
 
 
@@ -33,8 +29,9 @@ def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if not args:
         print(
-            "Usage: python run_scifig.py <scifig-subcommand|blind> [args...]\n"
-            "Subcommands: doctor, templates, new, read, probe, validate, render, qa, compare, render-refs, extract-blueprints, blind",
+            "Usage: python scripts/run_scifig.py <scifig-subcommand|blind|workbench> [args...]\n"
+            "Subcommands: doctor, templates, new, read, probe, validate, render, qa, compare, "
+            "render-refs, extract-blueprints, blind, workbench",
             file=sys.stderr,
         )
         return 2

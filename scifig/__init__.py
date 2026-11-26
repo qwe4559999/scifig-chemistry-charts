@@ -5,4 +5,4 @@ Design principles:
   2. Versioned themes, palettes, and chart SOPs under assets/.
   3. Simultaneous PNG / SVG / PDF export + quantitative QA + PDF blueprint extraction.
 """
-__version__ = "2.0.0"
+__version__ = "2.1.0"

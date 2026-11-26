@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SciFigStudio Interactive Workbench — 人机协同科研绘图工作台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='2' y='2' width='20' height='20' rx='4' fill='%231E5AA8'/%3E%3Cpath d='M5 17V6M5 17h14' stroke='%23E2EEFF' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6.5 14.5C8.5 14 9.2 7.5 11.2 8.2s3 5.3 4.8 3 2-2.2 2.8-2.4' stroke='%236EE7B7' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- TOP TOOLBAR (#0F2942 deep navy, 48px) -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-left">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <rect x="2" y="2" width="20" height="20" rx="4" fill="#1E5AA8" />
+          <path d="M5 17 L5 6 M5 17 L19 17" stroke="#E2EEFF" stroke-width="1.6" stroke-linecap="round" fill="none" />
+          <path d="M6.5 14.5 C8.5 14, 9.2 7.5, 11.2 8.2 C13 8.8, 14.2 13.5, 16 11.2 C17 10, 17.8 9.2, 18.8 8.8" stroke="#6EE7B7" stroke-width="1.8" stroke-linecap="round" fill="none" />
+          <circle cx="11.2" cy="8.2" r="1.5" fill="#FFFFFF" />
+        </svg>
+        <span class="brand-title">SciFigStudio Interactive Workbench</span>
+        <span class="brand-pill">双向同步 spec.json · 实时 QA 护栏</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="spec-picker-group">
+        <label class="sr-only" for="specSelect">选择图件 Spec</label>
+        <select id="specSelect" class="spec-select" title="切换图件 Spec">
+          <option value="">正在加载图件库...</option>
+        </select>
+        <button id="btnNewBlind" class="btn btn-navy-outline" title="从原始数据表新建 Blind Mode 盲绘草图">
+          <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>新建 Blind 盲绘</span>
+        </button>
+      </div>
+
+      <div class="topbar-divider"></div>
+
+      <div class="history-group">
+        <button id="btnUndo" class="btn btn-icon-label" title="撤销 (Ctrl+Z)" disabled>
+          <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5.5 4.5L2 8l3.5 3.5M2.5 8h7a4 4 0 0 1 0 8h-1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-1.5)"/></svg>
+          <span>撤销</span>
+          <span class="count-pill" id="undoCount">0</span>
+        </button>
+        <button id="btnRedo" class="btn btn-icon-label" title="重做 (Ctrl+Y)" disabled>
+          <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M10.5 4.5L14 8l-3.5 3.5M13.5 8h-7a4 4 0 0 0 0 8h1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-1.5)"/></svg>
+          <span>重做</span>
+          <span class="count-pill" id="redoCount">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <!-- Live QA Guardrail Badge + Popover -->
+      <div class="qa-badge-wrap">
+        <button id="qaBadgeBtn" class="qa-badge qa-pass" title="点击查看 QA 护栏详情与一键修复">
+          <span class="qa-dot" id="qaBadgeDot"></span>
+          <span id="qaBadgeText">QA: 0 重叠 PASS</span>
+        </button>
+        <div id="qaPopover" class="qa-popover hidden" role="dialog" aria-label="实时 QA 护栏诊断">
+          <div class="qa-popover-header">
+            <span class="qa-popover-title">实时 QA 防碰撞护栏</span>
+            <button id="btnCloseQaPopover" class="btn-ghost-xs" aria-label="关闭">×</button>
+          </div>
+          <div id="qaPopoverBody" class="qa-popover-body">
+            <div class="qa-ok-empty">当前图件零重叠、零出界，符合发表级规范。</div>
+          </div>
+          <div class="qa-popover-footer">
+            <button id="btnPopoverAutoFix" class="btn btn-danger-sm">一键自动避让修复</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export & Save buttons -->
+      <div class="export-group">
+        <button id="btnExportSvg" class="btn btn-cobalt" title="导出可编辑矢量 SVG">导出 SVG</button>
+        <button id="btnExportPdf" class="btn btn-cobalt" title="导出出版级矢量 PDF">PDF</button>
+        <button id="btnExportPng" class="btn btn-cobalt" title="导出 600 DPI 高清 PNG">600dpi PNG</button>
+        <button id="btnSaveSpec" class="btn btn-navy-outline" title="保存当前 spec.json 到磁盘 (Ctrl+S)">保存 Spec</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3-PANE WORKSPACE -->
+  <main class="workspace" id="workspace">
+    <!-- LEFT PANE: 数据表 & 图层树 -->
+    <aside class="pane pane-left" id="leftPane">
+      <div class="pane-header pane-header-left">
+        <span class="pane-title">左栏：数据表 &amp; 图层树</span>
+        <span class="pane-meta" id="layerSummaryPill">0 图层</span>
+      </div>
+
+      <!-- Upper: Layer Tree -->
+      <section class="panel-section layer-section">
+        <div class="section-bar">
+          <span class="section-label">图层树 (Panels / 曲线 / 峰标 / 图例)</span>
+          <div class="section-actions">
+            <button id="btnShowAllLayers" class="btn-link-xs" title="全部显示">全显</button>
+          </div>
+        </div>
+        <div id="layerTree" class="layer-tree" role="tree">
+          <div class="empty-hint">正在解析图件图层...</div>
+        </div>
+      </section>
+
+      <!-- Lower: Multi-format Data Table Preview & SHA256 Provenance -->
+      <section class="panel-section data-section">
+        <div class="section-bar">
+          <span class="section-label">多格式数据表预览</span>
+          <span class="section-meta" id="dataRowCount">-- 行</span>
+        </div>
+        <div id="dataTabs" class="data-tabs" role="tablist"></div>
+        <div id="dataOpsStrip" class="data-ops-strip">
+          <span class="op-badge op-badge-neutral">原始数据直读</span>
+        </div>
+        <div id="dataTableWrap" class="data-table-wrap">
+          <div class="empty-hint">暂无数据预览</div>
+        </div>
+        <div id="provenanceBar" class="provenance-bar prov-ok" title="原始数据文件 SHA256 哈希只读校验">
+          <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" class="prov-icon">
+            <path d="M8 1.5L3 3.5v4c0 3.2 2.1 5.8 5 6.8 2.9-1 5-3.6 5-6.8v-4L8 1.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+            <path d="M5.8 8l1.5 1.5 3-3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span id="provenanceText" class="prov-text">SHA256: -- · 原始值只读保护</span>
+        </div>
+      </section>
+    </aside>
+
+    <!-- CENTER PANE: 实时交互矢量画布 -->
+    <section class="pane pane-center" id="centerPane">
+      <div class="pane-header pane-header-center">
+        <span class="pane-title">中央：实时交互矢量画布（所见即所得 · 鼠标拖拽微调）</span>
+        <span class="pane-meta pane-meta-center" id="canvasDimPill">-- × -- in · 600 DPI</span>
+      </div>
+
+      <!-- Canvas Mode & Zoom Sub-toolbar -->
+      <div class="canvas-toolbar">
+        <div class="toolbar-cluster">
+          <div class="segmented" role="group" aria-label="交互模式">
+            <button id="modeSelectBtn" class="seg-btn active" data-mode="select" title="点击选中并直接鼠标拖拽峰标、虚线、图例或子图编号">
+              <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M3.5 2.5l8.5 5-4 1.2-1.8 4.3-2.7-10.5z" fill="currentColor"/></svg>
+              <span>选择/拖拽</span>
+            </button>
+            <button id="modeBoxBtn" class="seg-btn" data-mode="box" title="在画布上框选局部区域作为 AI 微调上下文">
+              <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="11" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2.5 2"/></svg>
+              <span>框选局部 AI 区域</span>
+            </button>
+          </div>
+
+          <label class="toggle-chip" title="显示元素交互锚点与边界框">
+            <input type="checkbox" id="chkOverlay" checked />
+            <span>辅助框/锚点</span>
+          </label>
+          <label class="toggle-chip toggle-chip-red" title="显示实时 QA 碰撞/出界红框">
+            <input type="checkbox" id="chkQaBoxes" checked />
+            <span>QA 预警框</span>
+          </label>
+          <label class="toggle-chip" title="拖拽时启用对齐吸附参考线">
+            <input type="checkbox" id="chkSnap" checked />
+            <span>对齐吸附</span>
+          </label>
+        </div>
+
+        <div class="toolbar-cluster">
+          <span id="renderStatus" class="render-status">
+            <span class="status-dot dot-ok" id="renderDot"></span>
+            <span id="renderStatusText">引擎就绪</span>
+          </span>
+          <div class="segmented segmented-sm" role="group" aria-label="缩放比例">
+            <button class="seg-btn active" data-zoom="fit">Fit</button>
+            <button class="seg-btn" data-zoom="1">100%</button>
+            <button class="seg-btn" data-zoom="1.25">125%</button>
+            <button class="seg-btn" data-zoom="1.5">150%</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Red QA Alert Strip (shown automatically on violation) -->
+      <div id="canvasQaBanner" class="canvas-qa-banner hidden" role="alert">
+        <div class="qa-banner-left">
+          <span class="qa-banner-tag">防碰撞红线触发</span>
+          <span id="canvasQaBannerMsg" class="qa-banner-msg">检测到文字重叠或出界</span>
+        </div>
+        <button id="btnBannerAutoFix" class="btn btn-danger-sm">一键自动避让修复</button>
+      </div>
+
+      <!-- Canvas Stage -->
+      <div class="canvas-stage" id="canvasStage">
+        <div class="figure-card" id="figureCard">
+          <img id="figureImg" class="figure-img" alt="SciFigStudio 实时渲染图件" draggable="false" />
+          <svg id="overlaySvg" class="overlay-svg" viewBox="0 0 1000 800" preserveAspectRatio="none">
+            <g id="panelsLayer"></g>
+            <g id="handlesLayer"></g>
+            <g id="snapGuidesLayer"></g>
+            <g id="boxSelectLayer"></g>
+            <g id="qaOverlayLayer"></g>
+            <g id="dragGhostLayer"></g>
+          </svg>
+          <div id="dragHud" class="drag-hud hidden">x: --, y: --</div>
+          <div id="canvasSpinner" class="canvas-spinner hidden">
+            <span class="spinner-ring"></span>
+            <span>引擎重绘中...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom AI Local Instruction Dock -->
+      <div class="ai-dock" id="aiDock">
+        <!-- Last Action Diff Toast -->
+        <div id="diffToast" class="diff-toast hidden">
+          <span class="diff-toast-badge" id="diffToastBadge">✓ 已同步</span>
+          <span class="diff-toast-text" id="diffToastText"></span>
+          <div class="diff-toast-actions">
+            <button id="btnToastUndo" class="btn-link-xs">撤销</button>
+            <button id="btnToastClose" class="btn-ghost-xs" aria-label="关闭提示">×</button>
+          </div>
+        </div>
+
+        <!-- Quick Chips & Region Pill -->
+        <div class="ai-chips-row">
+          <span class="ai-chips-label">快捷指令</span>
+          <div id="aiChips" class="ai-chips">
+            <button class="chip-btn" data-cmd="补充 724 nm 峰标">补充 724 nm 峰标</button>
+            <button class="chip-btn" data-cmd="图例移至左上角">图例移至左上角</button>
+            <button class="chip-btn" data-cmd="上移顶层曲线 0.04">上移顶层曲线 0.04</button>
+            <button class="chip-btn" data-cmd="切换 Nature Arial 主题">切换 Nature Arial</button>
+            <button class="chip-btn chip-btn-accent" data-cmd="__auto_fix__">自动修复 QA 碰撞</button>
+          </div>
+          <div id="regionBadge" class="region-badge hidden">
+            <span id="regionBadgeText">已框选区域</span>
+            <button id="btnClearRegion" class="region-clear-btn" title="清除框选区域">×</button>
+          </div>
+        </div>
+
+        <!-- AI Command Input Form -->
+        <form id="aiForm" class="ai-input-row" autocomplete="off">
+          <div class="ai-input-wrap">
+            <svg class="ai-spark-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+              <path d="M8 1.5l1.5 4.2 4.2 1.5-4.2 1.5L8 13l-1.5-4.3-4.2-1.5 4.2-1.5L8 1.5z" fill="currentColor"/>
+            </svg>
+            <input
+              id="aiInput"
+              type="text"
+              class="ai-input"
+              placeholder="输入局部微调指令，如：补充 724 nm 峰标 / 上移顶层曲线 0.04 / 图例移至左上角 / 切换 Nature Arial..."
+            />
+          </div>
+          <button id="btnAiRun" type="submit" class="btn btn-cobalt-lg">执行 AI 微调</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- RIGHT PANE: 样式 & Spec 双向检查器 -->
+    <aside class="pane pane-right" id="rightPane">
+      <div class="pane-header pane-header-right">
+        <span class="pane-title">右栏：样式 &amp; Spec 检查器</span>
+        <span class="pane-meta pane-meta-right" id="themeNamePill">origin-times-bold</span>
+      </div>
+
+      <div class="right-scroll">
+        <!-- 1. Theme & Palette Hot-Switch -->
+        <section class="inspector-card">
+          <div class="card-title-row">
+            <span class="card-title">主题与色板热切换</span>
+            <span class="card-sub">即时重排 · 零数据改动</span>
+          </div>
+          <div class="theme-pills" id="themePills">
+            <button class="theme-pill active" data-theme="origin-times-bold">Origin Times Bold</button>
+            <button class="theme-pill" data-theme="journal-nature-arial">Nature Arial</button>
+            <button class="theme-pill" data-theme="journal-acs-serif">ACS Serif</button>
+          </div>
+          <div class="palette-pills" id="palettePills">
+            <button class="palette-pill active" data-palette="publication-pastel">
+              <span class="swatches">
+                <i style="background:#6699BA"></i><i style="background:#CCA8E3"></i><i style="background:#8CCF8C"></i><i style="background:#B00F1A"></i>
+              </span>
+              <span>publication-pastel</span>
+            </button>
+            <button class="palette-pill" data-palette="nature-npg">
+              <span class="swatches">
+                <i style="background:#E64B35"></i><i style="background:#4DBBD5"></i><i style="background:#00A087"></i><i style="background:#3C5488"></i>
+              </span>
+              <span>nature-npg</span>
+            </button>
+            <button class="palette-pill" data-palette="okabe-ito">
+              <span class="swatches">
+                <i style="background:#E69F00"></i><i style="background:#56B4E9"></i><i style="background:#009E73"></i><i style="background:#0072B2"></i>
+              </span>
+              <span>okabe-ito</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- 2. Selected Element Property Inspector -->
+        <section class="inspector-card" id="inspectorCard">
+          <div class="card-title-row">
+            <span class="card-title">选中元素属性检查器</span>
+            <span class="selected-crumb" id="selectedCrumb">未选中</span>
+          </div>
+          <div id="inspectorBody" class="inspector-body">
+            <div class="inspector-empty">点击画布中的峰标、虚线、图例或左侧图层，即可直接编辑坐标与样式。</div>
+          </div>
+        </section>
+
+        <!-- 3. Journal Submission Preflight Card -->
+        <section class="inspector-card preflight-card" id="preflightCard">
+          <div class="card-title-row">
+            <span class="card-title">期刊投稿预检 (Preflight)</span>
+            <span class="preflight-overall pf-ok" id="preflightOverall">READY</span>
+          </div>
+          <div class="preflight-grid" id="preflightGrid">
+            <div class="pf-cell" id="pfWidth">
+              <span class="pf-label">栏宽规范</span>
+              <span class="pf-val">--</span>
+            </div>
+            <div class="pf-cell" id="pfDpi">
+              <span class="pf-label">输出分辨率</span>
+              <span class="pf-val">600 DPI</span>
+            </div>
+            <div class="pf-cell" id="pfFont">
+              <span class="pf-label">最小字号</span>
+              <span class="pf-val">&gt;=6.0 pt</span>
+            </div>
+            <div class="pf-cell" id="pfQa">
+              <span class="pf-label">QA / 守恒校验</span>
+              <span class="pf-val">PASS</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 4. Bidirectional spec.json Editor (Dark Navy Slide-19 Code Aesthetic) -->
+      <section class="json-section" id="jsonSection">
+        <div class="json-header">
+          <div class="json-header-left">
+            <span class="json-title">双向 spec.json 编辑器</span>
+            <span class="json-status json-valid" id="jsonStatus">已同步</span>
+          </div>
+          <div class="json-header-actions">
+            <button id="btnFormatJson" class="btn-json-sm" title="格式化 JSON">格式化</button>
+            <button id="btnApplyJson" class="btn-json-primary" title="应用 JSON 修改并重绘 (Ctrl+Enter)">应用 JSON</button>
+          </div>
+        </div>
+        <div id="jsonFlashBanner" class="json-flash-banner hidden">已同步更新: --</div>
+        <div class="json-editor-wrap">
+          <textarea
+            id="jsonEditor"
+            class="json-editor"
+            spellcheck="false"
+            aria-label="声明式 spec.json 双向编辑器"
+          ></textarea>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <!-- MODAL: 新建 Blind Mode 盲绘 -->
+  <div id="blindModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="blindModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="blindModalTitle" class="modal-title">新建 Blind Mode 无参照盲绘</h2>
+        <button id="btnCloseBlindModal" class="btn-ghost-xs" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">选择内置示例数据或输入本地原始数据路径（支持 .xlsx / .csv / .spa / .VGD / .asc），由 Blind Planner 自动识别数据结构并生成 90% 无碰撞初稿。</p>
+        <div class="form-row">
+          <label for="blindSampleSelect">快速示例数据集 (可选)</label>
+          <select id="blindSampleSelect" class="form-input">
+            <option value="">-- 手动输入路径或选择内置示例 --</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="blindSourceInput">数据路径 (文件或目录)</label>
+          <input id="blindSourceInput" type="text" class="form-input" placeholder="例如：examples/demo_uvvis.csv 或本地 .xlsx / .csv / .spa / .VGD 路径" />
+        </div>
+        <div class="form-row-2">
+          <div class="form-row">
+            <label for="blindChartSelect">图型模板 (Chart ID)</label>
+            <select id="blindChartSelect" class="form-input">
+              <option value="06_single-multi-spectrum">06_single-multi-spectrum</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="blindThemeSelect">主题风格</label>
+            <select id="blindThemeSelect" class="form-input">
+              <option value="origin-times-bold">Origin Times Bold</option>
+              <option value="journal-nature-arial">Nature Arial</option>
+              <option value="journal-acs-serif">ACS Serif</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="blindTitleInput">图表标题/名称 (可选)</label>
+          <input id="blindTitleInput" type="text" class="form-input" placeholder="自动识别" />
+        </div>
+        <div id="blindModalError" class="modal-error hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCancelBlind" class="btn btn-slate-outline">取消</button>
+        <button id="btnSubmitBlind" class="btn btn-cobalt-lg">生成 Blind 初稿并载入画布</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (modular, zero external CDN dependencies) -->
+  <script src="canvas.js"></script>
+  <script src="inspector.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

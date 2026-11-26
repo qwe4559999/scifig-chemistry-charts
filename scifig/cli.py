@@ -168,6 +168,7 @@ PROBE = {
     ".asc": ("text", "scifig.readers.read_asc"),
     ".ras": ("text", "scifig.readers.read_ras"),
     ".spc": ("raw float array", "scifig.readers.read_spc"),
+    ".opju": ("proprietary (CPYUA)", "archived Origin project (not used by scifig)"),
     "(none)": ("Bruker TopSpin", "scifig.readers.read_bruker"),
 }
 
@@ -297,5 +298,17 @@ def main(argv=None):
     pr.add_argument("--out", default=None)
     pr.set_defaults(func=cmd_probe)
 
+    wb = sub.add_parser("workbench", help="Launch Interactive Human-AI Visual Editing GUI Workbench")
+    wb.add_argument("--host", default="127.0.0.1")
+    wb.add_argument("--port", type=int, default=8765)
+    wb.add_argument("--no-open", action="store_true", help="Do not auto-open browser")
+    wb.add_argument("--verbose", action="store_true", help="Print HTTP access logs")
+    wb.set_defaults(func=cmd_workbench)
+
     a = ap.parse_args(argv)
     return a.func(a)
+
+
+def cmd_workbench(a):
+    from .workbench_server import serve
+    return serve(host=a.host, port=a.port, open_browser=not a.no_open, verbose=a.verbose)
