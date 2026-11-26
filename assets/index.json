@@ -2,12 +2,91 @@
  "studio": "SciFigStudio",
  "version": "2.0.0",
  "updated_at": "2026-11-26",
- "root": "./assets",
+ "root": "assets",
+ "visual_walls": {
+  "elements_wall": "elements_wall.png",
+  "gallery_wall": "gallery_wall.png",
+  "generator": "scifig/build_visual_assets.py"
+ },
+ "elements": [
+  {
+   "id": "01_axis-frames",
+   "name": "Axis Frames (Box / L-shape / Seamless hspace=0)",
+   "png": "elements/01_axis-frames.png",
+   "svg": "elements/01_axis-frames.svg"
+  },
+  {
+   "id": "02_ticks",
+   "name": "Ticks (Inward / Minor / Reverse Axis)",
+   "png": "elements/02_ticks.png",
+   "svg": "elements/02_ticks.svg"
+  },
+  {
+   "id": "03_markers",
+   "name": "Markers (Solid vs Hollow o/s/^/D)",
+   "png": "elements/03_markers.png",
+   "svg": "elements/03_markers.svg"
+  },
+  {
+   "id": "04_line-styles",
+   "name": "Line Styles (Data 1.55pt / DRIFTS 0.80pt / Guides)",
+   "png": "elements/04_line-styles.png",
+   "svg": "elements/04_line-styles.svg"
+  },
+  {
+   "id": "05_legend-forms",
+   "name": "Legend Forms (Frame-off + Note / Horizontal Gradient)",
+   "png": "elements/05_legend-forms.png",
+   "svg": "elements/05_legend-forms.svg"
+  },
+  {
+   "id": "06_peak-annotations",
+   "name": "Peak Annotations (Vertical Guides & EPR Comb Bracket)",
+   "png": "elements/06_peak-annotations.png",
+   "svg": "elements/06_peak-annotations.svg"
+  },
+  {
+   "id": "07_panel-letters",
+   "name": "Panel Letters (Outside Top-Left 14.1pt Bold)",
+   "png": "elements/07_panel-letters.png",
+   "svg": "elements/07_panel-letters.svg"
+  },
+  {
+   "id": "08_semantic-palette",
+   "name": "Semantic Palette (4 Series + 4 Deconv Fills)",
+   "png": "elements/08_semantic-palette.png",
+   "svg": "elements/08_semantic-palette.svg"
+  },
+  {
+   "id": "09_sequential-ramps",
+   "name": "Sequential Ramps (Purple / Blue / 12-Step DRIFTS)",
+   "png": "elements/09_sequential-ramps.png",
+   "svg": "elements/09_sequential-ramps.svg"
+  },
+  {
+   "id": "10_gradient-fills",
+   "name": "Gradient Fills (Origin-Style Vertical Alpha)",
+   "png": "elements/10_gradient-fills.png",
+   "svg": "elements/10_gradient-fills.svg"
+  },
+  {
+   "id": "11_typography",
+   "name": "Typography (Times Bold 14.1/10.2/7.0pt & Arial)",
+   "png": "elements/11_typography.png",
+   "svg": "elements/11_typography.svg"
+  },
+  {
+   "id": "12_broken-axis",
+   "name": "Broken Axis (Parallel // Slashes & Custom Weights)",
+   "png": "elements/12_broken-axis.png",
+   "svg": "elements/12_broken-axis.svg"
+  }
+ ],
  "themes": [
   {
    "id": "origin-times-bold",
    "path": "themes/origin-times-bold.json",
-   "description": "Measured from Catalyst-X publication PDFs: Times New Roman Bold, 14.1pt labels/panel letters, 10.2pt ticks/legends, 1.55pt frames."
+   "description": "Publication vector PDF baseline: Times New Roman Bold, 14.1pt labels/panel letters, 10.2pt ticks/legends, 1.55pt frames."
   },
   {
    "id": "journal-nature-arial",
@@ -24,7 +103,7 @@
   {
    "id": "publication-pastel",
    "path": "palettes/publication-pastel.json",
-   "description": "Exact PDF-extracted colors for Support (#B00F1A), Catalyst-A (#6699BA), Catalyst-B (#CCA8E3), Catalyst-C (#8CCF8C), GHSV ramps, deconv fills, and DRIFTS 12-curve ramp."
+   "description": "Balanced scientific pastel & categorical hex palette extracted from publication vector PDFs."
   },
   {
    "id": "okabe-ito",
@@ -43,68 +122,138 @@
    "name": "催化评价折线+标记图 (Catalytic Evaluation Line-Marker)",
    "path": "charts/01_line-marker-eval/chart.json",
    "workflow": "charts/01_line-marker-eval/workflow.md",
-   "figures": ["Fig1", "FigS1", "FigS2", "FigS3", "FigS4"]
+   "preview_png": "charts/01_line-marker-eval/preview.png",
+   "preview_svg": "charts/01_line-marker-eval/preview.svg",
+   "figures": [
+    "Fig1",
+    "FigS1",
+    "FigS2",
+    "FigS3",
+    "FigS4"
+   ]
   },
   {
    "id": "02_stacked-spectra",
    "name": "堆叠光谱图 (Stacked Spectra: XRD / 27Al NMR)",
    "path": "charts/02_stacked-spectra/chart.json",
    "workflow": "charts/02_stacked-spectra/workflow.md",
-   "figures": ["Fig2A", "Fig2C"]
+   "preview_png": "charts/02_stacked-spectra/preview.png",
+   "preview_svg": "charts/02_stacked-spectra/preview.svg",
+   "figures": [
+    "Fig2A",
+    "Fig2C"
+   ]
   },
   {
    "id": "03_isotherm-psd",
    "name": "吸附等温线与孔径分布 (N2 Isotherm & Pore Size Distribution)",
    "path": "charts/03_isotherm-psd/chart.json",
    "workflow": "charts/03_isotherm-psd/workflow.md",
-   "figures": ["Fig2B", "FigS6"]
+   "preview_png": "charts/03_isotherm-psd/preview.png",
+   "preview_svg": "charts/03_isotherm-psd/preview.svg",
+   "figures": [
+    "Fig2B",
+    "FigS6"
+   ]
   },
   {
    "id": "04_deconv-peak-fit",
    "name": "多样品无缝堆叠分峰图 (Stacked Deconvolution Peak-Fit)",
    "path": "charts/04_deconv-peak-fit/chart.json",
    "workflow": "charts/04_deconv-peak-fit/workflow.md",
-   "figures": ["Fig2D", "Fig4A", "Fig5B"]
+   "preview_png": "charts/04_deconv-peak-fit/preview.png",
+   "preview_svg": "charts/04_deconv-peak-fit/preview.svg",
+   "figures": [
+    "Fig2D",
+    "Fig4A",
+    "Fig5B"
+   ]
   },
   {
    "id": "05_stacked-bar-comp",
    "name": "100% 堆叠组分柱状图 (Stacked Composition Bar)",
    "path": "charts/05_stacked-bar-comp/chart.json",
    "workflow": "charts/05_stacked-bar-comp/workflow.md",
-   "figures": ["Fig4B"]
+   "preview_png": "charts/05_stacked-bar-comp/preview.png",
+   "preview_svg": "charts/05_stacked-bar-comp/preview.svg",
+   "figures": [
+    "Fig4B"
+   ]
   },
   {
    "id": "06_single-multi-spectrum",
    "name": "单面板多曲线光谱+峰标 (Single-Panel Multi-Spectrum: EPR / UV-Vis)",
    "path": "charts/06_single-multi-spectrum/chart.json",
    "workflow": "charts/06_single-multi-spectrum/workflow.md",
-   "figures": ["Fig5A", "FigS7"]
+   "preview_png": "charts/06_single-multi-spectrum/preview.png",
+   "preview_svg": "charts/06_single-multi-spectrum/preview.svg",
+   "figures": [
+    "Fig5A",
+    "FigS7"
+   ]
   },
   {
    "id": "07_drifts-broken-stack",
    "name": "原位 DRIFTS 断轴/整轴时间序列堆叠 (In Situ DRIFTS Stack)",
    "path": "charts/07_drifts-broken-stack/chart.json",
    "workflow": "charts/07_drifts-broken-stack/workflow.md",
-   "figures": ["Fig6", "FigS9", "FigS10", "FigS11", "FigS12"]
+   "preview_png": "charts/07_drifts-broken-stack/preview.png",
+   "preview_svg": "charts/07_drifts-broken-stack/preview.svg",
+   "figures": [
+    "Fig6",
+    "FigS9",
+    "FigS10",
+    "FigS11",
+    "FigS12"
+   ]
   },
   {
    "id": "08_xps-reverse-deconv",
    "name": "XPS 倒序结合能分峰堆叠 (XPS Reverse-Axis Deconvolution)",
    "path": "charts/08_xps-reverse-deconv/chart.json",
    "workflow": "charts/08_xps-reverse-deconv/workflow.md",
-   "figures": ["FigS8"]
+   "preview_png": "charts/08_xps-reverse-deconv/preview.png",
+   "preview_svg": "charts/08_xps-reverse-deconv/preview.svg",
+   "figures": [
+    "FigS8"
+   ]
   },
   {
    "id": "09_microscopy-montage",
    "name": "电镜与能谱拼版 (TEM/HAADF/EDS & SEM Montage)",
    "path": "charts/09_microscopy-montage/chart.json",
    "workflow": "charts/09_microscopy-montage/workflow.md",
-   "figures": ["Fig3", "FigS5"]
+   "preview_png": "charts/09_microscopy-montage/preview.png",
+   "preview_svg": "charts/09_microscopy-montage/preview.svg",
+   "figures": [
+    "Fig3",
+    "FigS5"
+   ]
   }
  ],
  "coverage": {
-  "main_figures": ["Fig1", "Fig2", "Fig3", "Fig4", "Fig5", "Fig6"],
-  "si_figures": ["FigS1", "FigS2", "FigS3", "FigS4", "FigS5", "FigS6", "FigS7", "FigS8", "FigS9", "FigS10", "FigS11", "FigS12"],
+  "main_figures": [
+   "Fig1",
+   "Fig2",
+   "Fig3",
+   "Fig4",
+   "Fig5",
+   "Fig6"
+  ],
+  "si_figures": [
+   "FigS1",
+   "FigS2",
+   "FigS3",
+   "FigS4",
+   "FigS5",
+   "FigS6",
+   "FigS7",
+   "FigS8",
+   "FigS9",
+   "FigS10",
+   "FigS11",
+   "FigS12"
+  ],
   "total_covered": 18,
   "coverage_pct": 100.0
  },

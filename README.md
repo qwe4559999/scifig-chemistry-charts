@@ -26,6 +26,18 @@ An Origin-free, declarative scientific figure engine, 9-type chemistry chart ass
 
 ---
 
+## Visual Asset Library (100% Synthetic Open-Source Swatches & Previews)
+
+All visual assets below are mathematically synthesized via `python -X utf8 -m scifig.build_visual_assets` (zero copied lab data):
+
+### 12 Atomic Visual Elements
+![Atomic Visual Elements](assets/elements_wall.png)
+
+### 9 Chemistry Chart Types
+![9 Chemistry Chart Types](assets/gallery_wall.png)
+
+---
+
 ## Quickstart
 
 ```bash
