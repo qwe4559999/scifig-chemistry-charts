@@ -5,7 +5,7 @@ description: End-to-end declarative scientific figure generation, paper reproduc
 
 # SciFig Chemistry Charts (`scifig-chemistry-charts`)
 
-Declarative scientific figure skill powered by `.` (`scifig`). Consolidates 9 canonical chemistry chart workflows (`01_line-marker-eval` through `09_microscopy-montage`), vector-PDF-measured themes/palettes, raw instrument readers, automated visual/numerical QA gates, reference-free blind plotting, and the Interactive Human-AI GUI Workbench.
+Declarative scientific figure skill powered by `.` (`scifig`). Natively compatible with **Antigravity, DeepSeek Harness, Claude Code, Codex, and Cursor** (`SKILL.md` discovery), and bundles the complete `scifig` Python engine, 9 canonical chemistry chart workflows (`01_line-marker-eval` through `09_microscopy-montage`), vector-PDF-measured themes/palettes, raw instrument readers, automated visual/numerical QA gates, reference-free blind plotting, and the **Interactive Human-AI GUI Workbench** (`scifig-workbench`).
 
 ## 0. Environment & Health Check
 
