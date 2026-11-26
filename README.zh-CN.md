@@ -170,16 +170,9 @@ scifig-workbench --port 8765
 
 ## 贡献者
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/qwe4559999">
-        <img src="https://github.com/qwe4559999.png?size=96" width="64" height="64" alt="qwe4559999" /><br />
-        <sub><b>qwe4559999</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
+<a href="https://github.com/qwe4559999/scifig-chemistry-charts/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=qwe4559999/scifig-chemistry-charts" alt="Contributors" />
+</a>
 
 ## 开源协议
 
