@@ -93,9 +93,10 @@ launch_workbench.bat   # or ./launch_workbench.sh
 
 **Core workbench capabilities:**
 - **Direct Manipulation & Snap Guides**: Drag peak text labels, vertical dashed peak lines (`vline`), legends, sample labels, and panel letters directly on the canvas; coordinates write back to `spec.json` with Undo/Redo.
-- **Local AI Micro-Editing Bar**: Execute bilingual offline NLU commands (e.g., `"补充 724 nm 峰标"`, `"上移顶层曲线 0.04"`, `"图例移至左上角"`, `"切换 Nature Arial 主题"`, `"自动修复 QA 碰撞"`) or optional OpenAI-compatible LLM (`SCIFIG_LLM_API_KEY`).
+- **Local AI Micro-Editing Bar**: Execute bilingual offline NLU commands (e.g., `"补充 724 nm 峰标"`, `"上移顶层曲线 0.04"`, `"图例移至左上角"`, `"切换 Nature Arial 主题"`, `"自动修复 QA 碰撞"`) or optional OpenAI-compatible LLM (`SCIFIG_LLM_API_KEY`, `SCIFIG_LLM_BASE_URL=https://api.deepseek.com/v1`, `SCIFIG_LLM_MODEL=deepseek-chat`; runs 100% offline deterministic NLU when unset).
 - **Real-Time QA Guardrail & Journal Preflight**: Highlights text overlaps, clipping, or legend occlusions in red with one-click Auto-Fix, checks column width / 600 DPI / min font `>= 6.0 pt`, and verifies raw data SHA-256 read-only provenance.
 - **Publication Export**: One-click export of editable `SVG`, vector `PDF`, `600 DPI PNG`, and saved `spec.json`.
+- **Headless HTTP API for External Agent Harnesses**: Pass `--no-open --port 8765` (`scifig-workbench --no-open --port 8765` or `python scripts/run_scifig.py workbench --no-open --port 8765`) to run as a local microservice exposing `POST /api/blind`, `POST /api/render`, `POST /api/ai-command`, `POST /api/auto-fix`, and `POST /api/export` for `DeepSeek`, `LangGraph`, `OpenAI Agents`, or custom harnesses.
 
 ---
 

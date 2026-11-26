@@ -90,6 +90,97 @@ python -X utf8 scripts/run_scifig.py workbench --port 8765
 
 ---
 
+## Agent Framework & LLM Harness Integration
+
+> **双协议 Agent 与大模型接入**：SciFigStudio 同时支持 **原生 Skill 发现协议**（`SKILL.md`，适配 Antigravity / Claude Code / Codex / Cursor）与 **本地 HTTP REST 微服务协议**（适配 DeepSeek / LangGraph / OpenAI Agents / 自定义 Agent Harness）；Workbench 内置 AI 指令栏亦可通过 `SCIFIG_LLM_*` 直连 DeepSeek 等 OpenAI 兼容模型，未配置时默认 **100% 离线确定性 NLU** 运行。
+
+### 1. Native Skill Discovery (`Antigravity` / `Claude Code` / `Codex` / `Cursor`)
+- Copy `scifig-chemistry-charts/` (or extract `scifig-chemistry-charts-v2.1.0-skill.zip` from [**GitHub Releases**](https://github.com/qwe4559999/scifig-chemistry-charts/releases)) into your agent framework's `skills/` directory.
+- `SKILL.md` automatically exposes all three unified workflows to the agent: **Mode 1** (Reference-Anchored reproduction), **Mode 2** (Blind `blind_planner` generation), and **Mode 3** (`workbench` human-in-the-loop GUI).
+
+### 2. Local HTTP REST API / Tool Calling (`DeepSeek` / `LangGraph` / `OpenAI Agents` / Custom Harnesses)
+Start the Workbench backend as a headless local figure microservice (`--no-open` skips launching a browser tab):
+
+```bash
+scifig-workbench --no-open --port 8765
+# Or from source:
+python -X utf8 -m scifig workbench --no-open --port 8765
+```
+
+Wrap the **5 core JSON `POST` endpoints** (plus `GET /api/health`) as Agent tools so any LLM harness can synthesize figures from raw data, inspect `qa` collision bounding boxes & `preflight` checks, auto-repair overlaps, export publication outputs, and hand off the live `spec.json` to a human researcher at `http://127.0.0.1:8765/`:
+
+| Endpoint | Purpose for Agent Tool Calling |
+| :--- | :--- |
+| `POST /api/blind` | Generate an initial `spec` + preview + `qa` report from `(data_path, chart_id, theme, palette, title)` via `blind_planner`. |
+| `POST /api/render` | Render a modified `spec` dict and return updated `qa` collision boxes, draggable `handles`, and `preflight`. |
+| `POST /api/ai-command` | Apply natural-language figure edits (`spec`, `instruction`) via offline NLU or configured LLM. |
+| `POST /api/auto-fix` | Run deterministic `auto_fix_qa` collision/clipping repair and return `actions`, `diff_lines`, and repaired `spec`. |
+| `POST /api/export` | Export publication-ready `svg`, `pdf`, `png` (`dpi=600`), `spec`, or SHA-256 `provenance` bytes. |
+
+**Minimal `curl` & Python `urllib` example** (zero external HTTP dependencies):
+
+```bash
+# 1) Blind-plot synthetic data -> inspect QA -> export 600 DPI PNG or SVG
+curl -s -X POST http://127.0.0.1:8765/api/blind \
+  -H "Content-Type: application/json" \
+  -d '{"data_path":"examples/demo_eval.csv","chart_id":"01_line-marker-eval","theme":"journal-nature-arial","title":"Synthetic Eval"}' \
+  | python -c "import sys,json; d=json.load(sys.stdin); print('ok:', d['ok'], 'qa_pass:', d['qa']['pass'], 'handles:', len(d['handles']))"
+```
+
+```python
+import json, pathlib, urllib.request
+
+BASE = "http://127.0.0.1:8765"
+
+def post_json(path: str, payload: dict) -> dict | bytes:
+    req = urllib.request.Request(
+        f"{BASE}{path}",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        raw = resp.read()
+        return json.loads(raw) if "application/json" in resp.headers.get("Content-Type", "") else raw
+
+state = post_json("/api/blind", {
+    "data_path": "examples/demo_eval.csv",
+    "chart_id": "01_line-marker-eval",
+    "theme": "journal-nature-arial",
+    "title": "Synthetic catalytic evaluation",
+})
+state = post_json("/api/ai-command", {"spec": state["spec"], "instruction": "图例移至左上角"})
+if not state["qa"]["pass"]:
+    state = post_json("/api/auto-fix", {"spec": state["spec"]})
+svg_bytes = post_json("/api/export", {"spec": state["spec"], "format": "svg", "dpi": 600})
+out = pathlib.Path("examples/out/agent_fig.svg")
+out.parent.mkdir(parents=True, exist_ok=True)
+out.write_bytes(svg_bytes)
+```
+
+### 3. Connecting DeepSeek or Any OpenAI-Compatible Model Inside the Workbench AI Bar
+The Workbench AI Micro-Editing Bar (`scifig/workbench_bridge.py`) supports connecting DeepSeek or any OpenAI-compatible `/chat/completions` endpoint via three environment variables:
+
+```bash
+# Linux / macOS
+export SCIFIG_LLM_API_KEY="sk-your-key"
+export SCIFIG_LLM_BASE_URL="https://api.deepseek.com/v1"
+export SCIFIG_LLM_MODEL="deepseek-chat"
+scifig-workbench --port 8765
+```
+
+```powershell
+# Windows PowerShell
+$env:SCIFIG_LLM_API_KEY="sk-your-key"
+$env:SCIFIG_LLM_BASE_URL="https://api.deepseek.com/v1"
+$env:SCIFIG_LLM_MODEL="deepseek-chat"
+scifig-workbench --port 8765
+```
+
+- When `SCIFIG_LLM_API_KEY` is **unset**, the Workbench runs **100% offline** via its deterministic scientific-figure NLU engine (`engine_mode: "local_nlu"`), requiring no network access or API keys.
+- When `SCIFIG_LLM_API_KEY` is **set**, commands not handled directly by local NLU rules fall back automatically to `{SCIFIG_LLM_BASE_URL}/chat/completions` (`engine_mode: "llm"`).
+
+---
+
 ## 9 Canonical Chemistry Chart Types & Native Readers
 
 - **9 Chart SOPs (`assets/charts/`)**:
