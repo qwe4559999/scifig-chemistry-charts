@@ -52,9 +52,12 @@ def _zip_directory(src_dir: Path, zip_path: Path, arc_root: str | None = None) -
     zip_path.parent.mkdir(parents=True, exist_ok=True)
     if zip_path.exists():
         zip_path.unlink()
+    zip_path_res = zip_path.resolve()
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         for p in sorted(src_dir.rglob("*")):
             if p.is_dir():
+                continue
+            if p.resolve() == zip_path_res:
                 continue
             rel = p.relative_to(src_dir)
             arc = Path(arc_root) / rel if arc_root else rel
@@ -64,17 +67,32 @@ def _zip_directory(src_dir: Path, zip_path: Path, arc_root: str | None = None) -
 
 def build_skill_zip(out_dir: Path, version: str) -> Path:
     """Create a clean, sanitized skill + engine source zip without .git/build/dist/caches."""
-    zip_path = out_dir / f"scifig-chemistry-charts-v{version}-skill.zip"
+    out_dir_res = out_dir.resolve()
+    zip_path = out_dir_res / f"scifig-chemistry-charts-v{version}-skill.zip"
     zip_path.parent.mkdir(parents=True, exist_ok=True)
     if zip_path.exists():
         zip_path.unlink()
+    zip_path_res = zip_path.resolve()
 
-    skip_dirs = {".git", "__pycache__", "build", "dist", ".pytest_cache", ".venv", "venv", "outputs"}
+    skip_dirs = {
+        ".git",
+        "__pycache__",
+        "build",
+        "dist",
+        "release_artifacts",
+        ".pytest_cache",
+        ".venv",
+        "venv",
+        "outputs",
+    }
     skip_suffixes = {".pyc", ".pyo", ".spec"}
 
     with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
         for p in sorted(REPO_ROOT.rglob("*")):
             if p.is_dir():
+                continue
+            p_res = p.resolve()
+            if p_res == zip_path_res or p_res.is_relative_to(out_dir_res):
                 continue
             rel = p.relative_to(REPO_ROOT)
             if any(part in skip_dirs or part.endswith(".egg-info") for part in rel.parts):
@@ -92,6 +110,10 @@ def build_skill_zip(out_dir: Path, version: str) -> Path:
 def build_workbench_bundle(out_dir: Path, version: str, skip_pyinstaller: bool = False) -> Path | None:
     if skip_pyinstaller:
         return None
+
+    examples_out = REPO_ROOT / "examples" / "out"
+    if examples_out.exists():
+        shutil.rmtree(examples_out)
 
     sep = ";" if os.name == "nt" else ":"
     dist_dir = REPO_ROOT / "dist"
@@ -213,7 +235,12 @@ def build_workbench_bundle(out_dir: Path, version: str, skip_pyinstaller: bool =
 
     # Drop README_QUICKSTART.txt and visible copy of examples/ next to executable
     (app_dir / "README_QUICKSTART.txt").write_text(QUICKSTART_TXT.format(version=version), encoding="utf-8")
-    shutil.copytree(REPO_ROOT / "examples", app_dir / "examples", dirs_exist_ok=True)
+    shutil.copytree(
+        REPO_ROOT / "examples",
+        app_dir / "examples",
+        ignore=shutil.ignore_patterns("out"),
+        dirs_exist_ok=True,
+    )
 
     sys_tag = "win64" if os.name == "nt" else ("macos" if platform.system() == "Darwin" else "linux")
     zip_name = f"SciFigStudio-Workbench-v{version}-{sys_tag}.zip"

@@ -12,6 +12,7 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -22,18 +23,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
       - name: Verify demos & QA
+        shell: pwsh
         run: |
           python -X utf8 scripts/run_scifig.py doctor
           python -X utf8 scripts/run_scifig.py render examples/demo_uvvis_spec.json -o examples/out --name DemoUV
           python -X utf8 scripts/run_scifig.py qa examples/demo_uvvis_spec.json --png examples/out/DemoUV.png
+          Remove-Item -Recurse -Force examples/out -ErrorAction SilentlyContinue
       - name: Build Windows Workbench & Skill zips
         run: python -X utf8 scripts/build_release.py --out-dir release_artifacts
+      - name: Verify release archive sizes
+        shell: pwsh
+        run: |
+          $zips = Get-ChildItem -Path release_artifacts/*.zip
+          if (-not $zips) { throw "No release zip artifacts found!" }
+          $zips | ForEach-Object { "{0,-55} {1,8:N2} MB" -f $_.Name, ($_.Length / 1MB) }
+          $skill = Get-ChildItem -Path release_artifacts/*-skill.zip | Select-Object -First 1
+          $win = Get-ChildItem -Path release_artifacts/*-win64.zip | Select-Object -First 1
+          if (-not $skill) { throw "Missing *-skill.zip artifact!" }
+          if (-not $win) { throw "Missing *-win64.zip artifact!" }
+          if ($skill.Length -ge 30MB) { throw "Skill zip too large: $($skill.Length / 1MB) MB (expected < 30 MB)" }
+          if ($win.Length -le 30MB) { throw "Windows workbench zip too small: $($win.Length / 1MB) MB (expected > 30 MB)" }
+          Write-Host "OK: Archive size checks passed."
       - uses: actions/upload-artifact@v4
         with:
           name: windows-artifacts
           path: release_artifacts/*.zip
 
   build-unix-and-wheel:
+    timeout-minutes: 15
     strategy:
       matrix:
         include:
